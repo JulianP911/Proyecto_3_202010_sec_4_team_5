@@ -123,8 +123,9 @@ public class Modelo
 				String EPOTEQ = e.getAsJsonObject().get("properties").getAsJsonObject().get("EPOTEQUIPA").getAsString();
 				String EPONOM = e.getAsJsonObject().get("properties").getAsJsonObject().get("EPONOMBRE").getAsString();
 				String EPOIDE = e.getAsJsonObject().get("properties").getAsJsonObject().get("EPOIDENTIF").getAsString();
+				String EPOLOC = e.getAsJsonObject().get("properties").getAsJsonObject().get("EPOIULOCAL").getAsString();
 
-				EstacionPolicia nuevo = new EstacionPolicia(longitud, latitud, OBJECTID, DES_ESTACION, EPODIR, EPOCOD, EPOLAT, EPOLON, EPOSER, EPOHOR, EPOTEL, EPOCEL, EPOFUN, EPOTEQ, EPONOM, EPOIDE);
+				EstacionPolicia nuevo = new EstacionPolicia(longitud, latitud, OBJECTID, DES_ESTACION, EPODIR, EPOCOD, EPOLAT, EPOLON, EPOSER, EPOHOR, EPOTEL, EPOCEL, EPOFUN, EPOTEQ, EPONOM, EPOIDE, EPOLOC);
 				datos.add(nuevo);
 			}
 
@@ -135,5 +136,55 @@ public class Modelo
 			e.printStackTrace();
 		}
 		return datos;			
+	}
+	
+	/**
+	 * Muestra la informacion con el mayor OBJECTID encontrado en la lista de comparendos tomados en 2018
+	 * @return El comparendo con mayor objectid encontrado recorriendo la lista de comprenados
+	 */
+	public String darObjectidMayorComparendo()
+	{
+		String mensaje = " ";
+		Comparendo actual = cargarDatos().get(0);
+
+		for(int i = 0; i < cargarDatos().size(); i++)
+		{
+			Comparendo elemento = cargarDatos().get(i);
+			if(elemento.getObjective() > actual.getObjective())
+			{
+				actual = elemento;
+			}
+		}
+
+		mensaje = actual.getObjective() + ", " + actual.getFecha_hora() + ", " + actual.getInfraccion() + ", " + 
+				actual.getClase_vehi() + ", " + actual.getTipo_servi() + ", " +  actual.getLocalidad() + ", " +
+				actual.getMunicipio();
+
+		return mensaje;
+	}
+	
+	/**
+	 * Muestra la informacion con el mayor OBJECTID de la estacion de policia
+	 * @return La estacion de policia con mayor objectid 
+	 */
+	public String darObjectidMayorEstacion()
+	{
+		String mensaje = " ";
+		EstacionPolicia actual = cargarDatosEstacionesPolicia().get(0);
+
+		for(int i = 0; i < cargarDatosEstacionesPolicia().size(); i++)
+		{
+			EstacionPolicia elemento = cargarDatosEstacionesPolicia().get(i);
+			if(elemento.getObjectId() > actual.getObjectId())
+			{
+				actual = elemento;
+			}
+		}
+
+		mensaje = actual.getObjectId() + ", " + actual.getEpodDescrip() + ", " + actual.getEpoDir_sitio() + ", " + 
+				actual.getEpoLatitud() + ", " + actual.getEpoLongitud() + ", " + actual.getEpoServicio() + ", " +
+				actual.getEpoHorario() + ", " + actual.getEpoTelefono() + ", " + actual.getEpoLocal();
+
+		return mensaje;
 	}
 }

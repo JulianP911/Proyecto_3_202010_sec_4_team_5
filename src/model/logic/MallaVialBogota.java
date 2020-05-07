@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -43,13 +44,13 @@ public class MallaVialBogota
 	 * Tabla de hash donde se guardaran los vertices con su informacion
 	 */
 	@SuppressWarnings("unused")
-	private SeparteChainingHashST<Integer, Vertex<String, InformacionVertice, InformacionArco>> vertices;
+	private SeparteChainingHashST<Integer, Vertex<String, InformacionVertice, InformacionArco>> vertices1;
 
 	/**
 	 * Tabla de hash donde se guardaran los arcos con su informacion de costo
 	 */
 	@SuppressWarnings("unused")
-	private SeparteChainingHashST<String, Edge<String, InformacionArco>> arcos;
+	private SeparteChainingHashST<String, Edge<String, InformacionArco>> arcos1;
 
 	// Metodo Constructor
 
@@ -60,8 +61,8 @@ public class MallaVialBogota
 	{
 		UnDiGraph = new UnGraph<String, InformacionVertice, InformacionArco>();
 		UnDiGraph1 = new UnGraph<String, InformacionVertice, InformacionArco>();
-		vertices = new SeparteChainingHashST<Integer, Vertex<String, InformacionVertice, InformacionArco>>();
-		arcos = new SeparteChainingHashST<String, Edge<String, InformacionArco>>();
+		vertices1 = new SeparteChainingHashST<Integer, Vertex<String, InformacionVertice, InformacionArco>>();
+		arcos1 = new SeparteChainingHashST<String, Edge<String, InformacionArco>>();
 	}
 
 	// Metodos
@@ -103,7 +104,7 @@ public class MallaVialBogota
 	/**
 	 * Metodo para cargar grafo 
 	 */
-	public void cargarGrafo()
+	public UnGraph<String, InformacionVertice, InformacionArco> cargarGrafo()
 	{
 		ArrayList<String> vertices = new ArrayList<String>();
 		ArrayList<String> arcos =new ArrayList<String>();
@@ -157,13 +158,14 @@ public class MallaVialBogota
 					UnDiGraph.addEdge(id, valores[j], new InformacionArco(pCosto));
 				}
 			}
-			System.out.println("Numero de vertices: " + UnDiGraph.V());
-			System.out.println("Numero de arcos: " + UnDiGraph.E());
+//			System.out.println("Numero de vertices: " + UnDiGraph.V());
+//			System.out.println("Numero de arcos: " + UnDiGraph.E());
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
+		return UnDiGraph;
 	}
 	
 	/**
@@ -267,7 +269,7 @@ public class MallaVialBogota
 	/**
 	 * Carga JSON del archivo generado en el requerimiento anterior
 	 */
-	public void cargarGrafoJSON()
+	public UnGraph<String,InformacionVertice,InformacionArco> cargarGrafoJSON()
 	{
 		UnDiGraph1 = new UnGraph<String,InformacionVertice,InformacionArco>();
 
@@ -302,7 +304,54 @@ public class MallaVialBogota
 			e.printStackTrace();
 		}
 		
-		System.out.println("Numero de vertices: " + UnDiGraph1.V());
-		System.out.println("Numero de arcos: " + UnDiGraph1.E());
+		return UnDiGraph1;
+	}
+	
+	/**
+	 * Muestra la informacion con el mayor ID del vertice
+	 * @return La informacion del veritice con el mayor ID
+	 */
+	public String darIdMayorVertice()
+	{
+		String mensaje = " ";
+		UnGraph<String, InformacionVertice, InformacionArco> grafo = cargarGrafo();
+		Vertex<String,InformacionVertice,InformacionArco> actual = grafo.getInfoVertexV("0");
+
+		for(int i = 0; i < grafo.V() ; i++)
+		{
+			String key = i + "";
+			Vertex<String,InformacionVertice,InformacionArco> elemento = grafo.getInfoVertexV(key);
+			int el1 = Integer.parseInt(elemento.getIdVertice());
+			int el2 = Integer.parseInt(actual.getIdVertice());
+			if(el1 > el2)
+			{
+				actual = elemento;
+			}
+		}
+
+		String vertice = actual.getIdVertice();
+		mensaje = vertice + ", " + grafo.getInfoVertex(vertice).getLatitud() + ", " + grafo.getInfoVertex(vertice).getLongitud();
+
+		return mensaje;
+	}
+	
+	/**
+	 * Muestra la informacion con el mayor ID del arco
+	 * @return La informacion del veritice con el mayor ID
+	 */
+	public String darIdMayorArco()
+	{
+		String mensaje = " ";
+		UnGraph<String, InformacionVertice, InformacionArco> grafo = cargarGrafo();
+		SeparteChainingHashST<Integer, Edge<String, InformacionArco>> actual = cargarGrafo().getArcosGrafo();
+
+		Iterator<Edge<String, InformacionArco>> it = actual.Vals().iterator();
+		while(it.hasNext())
+		{
+			Edge<String, InformacionArco> elemento = it.next();
+			mensaje = grafo.E() + ", " + elemento.getIdVerticeInicio() + ", " + elemento.getIdVerticeFinal();
+		}
+		
+		return mensaje;
 	}
 }

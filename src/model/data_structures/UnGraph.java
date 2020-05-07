@@ -36,6 +36,11 @@ public class UnGraph<K extends Comparable<K>,V,E>
 	 * Los vertices del grafo
 	 */
 	private SeparteChainingHashST<K, Vertex<K,V,E>> vertices;
+	
+	/**
+	 * Los arcos del grafo
+	 */
+	private SeparteChainingHashST<Integer, Edge<K, E>> arcos;
 
 	/**
 	 * Bolsa de enteros con las adjacencias de los vertices del grafo no dirigido
@@ -67,6 +72,7 @@ public class UnGraph<K extends Comparable<K>,V,E>
 	public UnGraph() 
 	{
 		vertices = new SeparteChainingHashST<K, Vertex<K,V,E>>();
+		arcos = new SeparteChainingHashST<Integer, Edge<K, E>>();
 		numeroVertices = 0;
 		numeroVertices = 0;
 		idReferenciaNum = 0;
@@ -173,9 +179,19 @@ public class UnGraph<K extends Comparable<K>,V,E>
 				Edge<K,E> arco = new Edge<K,E>(idVertexIni, idVertexFin, pCost);
 				startVertice.anadirArcoSaliente(arco);
 				endVertice.anadirArcoEntrante(arco);
+				arcos.put(numeroAristas, arco);
 				numeroAristas++;
 			}							
 		}
+	}
+	
+	/**
+	 * Proporciona un tabla de hash con los arcos del grafo
+	 * @return Separate Chaining con la información
+	 */
+	public SeparteChainingHashST<Integer,Edge<K, E>> getArcosGrafo()
+	{
+		return arcos;
 	}
 
 	/**
@@ -195,6 +211,24 @@ public class UnGraph<K extends Comparable<K>,V,E>
 			return null;
 		}	
 	}
+	
+	/**
+	 * Retorna el vertice correspondiente
+	 * @param idVertex Vertice a retorna
+	 * @return Vertice correspondiente al que ingresa
+	 */
+	public Vertex<K,V,E> getInfoVertexV(K idVertex)
+	{
+		Vertex<K,V,E> v = vertices.get(idVertex);
+		if(v != null)
+		{
+			return v;
+		}
+		else
+		{
+			return null;
+		}	
+	}
 
 	/**
 	 * Cambia la informacion que contiene el vertice
@@ -208,6 +242,42 @@ public class UnGraph<K extends Comparable<K>,V,E>
 		{
 			v.setValorVertice(infoVertex);;
 		}
+	}
+	
+	/**
+	 * Obtener arco entre dos vertice que ingresan como parametro
+	 * @param idVertexIni Vertice de inicio 
+	 * @param idVertexFin Vertice de inicio
+	 * @return Arco correspondiente con los vertices indicados
+	 */
+	public Edge<K,E> getEdge(K idVertexIni, K idVertexFin)
+	{
+		Vertex<K,V,E> vertice = vertices.get(idVertexIni);
+		Edge<K,E> arco = null;
+		if(vertice != null)
+		{			
+			Edge<K,E> arc = vertice.getEdge(idVertexFin);
+			if(arc != null)
+			{
+				arco = arc;
+			}
+		}
+		return arco;
+	}
+	
+	public E getInfoEdge(K idVertexIni, K idVertexFin)
+	{
+		Vertex<K,V,E> vertice = vertices.get(idVertexIni);
+		E arcoInfo = null;
+		if(vertice != null)
+		{			
+			Edge<K,E> arc = vertice.getEdge(idVertexFin);
+			if(arc != null)
+			{
+				arcoInfo = arc.getCostArc();
+			}
+		}
+		return arcoInfo;
 	}
 
 	/**

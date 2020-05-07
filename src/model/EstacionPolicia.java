@@ -88,6 +88,11 @@ public class EstacionPolicia
 	 */
 	private String epoIdentifi;
 	
+	/**
+	 * Numero de la estacion Local
+	 */
+	private String epoLocal;
+	
 	// Metodo Constructor
 	
 	/**
@@ -112,7 +117,7 @@ public class EstacionPolicia
 	public EstacionPolicia(double longitud, double latitud, int objectId, String epodDescrip, String epoDir_sitio,
 			String epoCod_sitio, double epoLatitud, double epoLongitud, String epoServicio, String epoHorario,
 			String epoTelefono, String epoCelectr, String epoFuncion, String epoTequipa, String epoNombre,
-			String epoIdentifi) 
+			String epoIdentifi, String epoLocal) 
 	{
 		super();
 		this.longitud = longitud;
@@ -131,6 +136,7 @@ public class EstacionPolicia
 		this.epoTequipa = epoTequipa;
 		this.epoNombre = epoNombre;
 		this.epoIdentifi = epoIdentifi;
+		this.epoLocal = epoLocal;
 	}
 	
 	// Metodos Getters and Setters de los atributos establecidos
@@ -293,5 +299,15 @@ public class EstacionPolicia
 	public void setEpoIdentifi(String epoIdentifi) 
 	{
 		this.epoIdentifi = epoIdentifi;
+	}
+	
+	public String getEpoLocal()
+	{
+		return epoLocal;
+	}
+	
+	public void setEpoLocal(String epoLocal) 
+	{
+		this.epoLocal = epoLocal;
 	}
 }
