@@ -1,9 +1,6 @@
 package controller;
 
 import java.util.Scanner;
-
-import Mapa.Mapa;
-import Mapa.Mapa2;
 import model.logic.MallaVialBogota;
 import model.logic.Modelo;
 import view.View;
@@ -81,25 +78,25 @@ public class Controller {
 			case 3:
 				view.printMessage("");
 				mallaVial.asociarComparendosVertice();
-				view.printMessage("El numero de comparendos asociados a los vertice es de: " + modelo.cargarDatos2().getSize());
+				view.printMessage("El numero de comparendos asociados a los vertice en total es de: " + modelo.cargarDatos2().getSize() + " en un total de 228046 vertices.");
 				view.printMessage("");
 				break;
 
 			case 4:
-				@SuppressWarnings("unused") 
-				Mapa temp = new Mapa("Grafo con Zona Delimitada");
+				view.printMessage("");
+				mallaVial.asociarComparendosArcos();
+				view.printMessage("El numero de comparendos asociados a los arcos en total es de: " + modelo.cargarDatos2().getSize() + " en un total de 272457 arcos.");
+				view.printMessage("");
 				break;
 				
 			case 5:
-			
+				view.printMessage("");
+				mallaVial.asociarEstacionesVertice();
+				view.printMessage("El numero de estaciones de policia asociadas a los vertice en total es de: " + modelo.cargarDatosEstacionesPolicia2().getSize() + " en un total de 21 vertices (Estacion por vertice).");
+				view.printMessage("");
 				break;
 				
 			case 6:
-				@SuppressWarnings("unused") 
-				Mapa2 temp1 = new Mapa2("Grafo con Estaciones de policia");
-				break;
-				
-			case 7:
 				lector.close();
 				fin = true;
 				break;

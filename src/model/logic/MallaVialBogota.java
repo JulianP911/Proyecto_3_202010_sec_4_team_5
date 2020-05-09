@@ -27,6 +27,7 @@ import model.data_structures.SeparteChainingHashST;
 import model.data_structures.UnGraph;
 import model.data_structures.Vertex;
 import model.Comparendo;
+import model.EstacionPolicia;
 
 public class MallaVialBogota 
 {
@@ -59,6 +60,16 @@ public class MallaVialBogota
 	 */
 	private SeparteChainingHashST<String, ArrayList<Comparendo>> comparendosVertice;
 	
+	/**
+	 * Tabla de hash donde se guardan los estaciones segun el vertic mas cercano
+	 */
+	private SeparteChainingHashST<String, EstacionPolicia> estacionesVertice;
+	
+	/**
+	 * Tabla de hash donde se guardan el id del arco con el numero de comparendos
+	 */
+	private SeparteChainingHashST<String, Integer> comparendosArcos;
+	
 
 	/**
 	 * Instancia del Modelo
@@ -77,6 +88,8 @@ public class MallaVialBogota
 		vertices1 = new SeparteChainingHashST<Integer, Vertex<String, InformacionVertice, InformacionArco>>();
 		arcos1 = new SeparteChainingHashST<String, Edge<String, InformacionArco>>();
 		comparendosVertice = new SeparteChainingHashST<String, ArrayList<Comparendo>>();
+		estacionesVertice = new SeparteChainingHashST<String, EstacionPolicia>();
+		comparendosArcos = new SeparteChainingHashST<String, Integer>();
 		modelo = new Modelo();
 	}
 
@@ -425,6 +438,65 @@ public class MallaVialBogota
 			}
 			
 			comparendosVertice.put(key, listaComparendos);
+		}
+	}
+	
+	/**
+	 * Asociar las estaciones de policia al vertice mas cercano
+	 */
+	public void asociarEstacionesVertice()
+	{
+		UnGraph<String, InformacionVertice, InformacionArco> grafo = cargarGrafo();
+		LinkedQueue<EstacionPolicia> estaciones = modelo.cargarDatosEstacionesPolicia2();
+
+		for(int i = 0; i < grafo.V() ; i++)
+		{
+			String key = i + "";
+			Vertex<String,InformacionVertice,InformacionArco> actualVertice = grafo.getInfoVertexV(key);
+			
+			Iterator<EstacionPolicia> it = estaciones.iterator();
+			while(it.hasNext())
+			{
+				EstacionPolicia actualEstacion = it.next();
+				double distancia1 = getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), actualEstacion.getLatitud(), actualEstacion.getLongitud());				
+                if(distancia1 < 0.01 )
+                {
+                	estacionesVertice.put(key, actualEstacion);
+                }
+			}
+		}
+	}
+	
+	/**
+	 * Asociar el total de comparendos entre los vértices que lo conenctan
+	 */
+	public void asociarComparendosArcos()
+	{
+		UnGraph<String, InformacionVertice, InformacionArco> grafo = cargarGrafo();
+		SeparteChainingHashST<Integer, Edge<String, InformacionArco>> actual = cargarGrafo().getArcosGrafo();
+		LinkedQueue<Comparendo> comparendos = modelo.cargarDatos2();
+		
+		int i = 0;
+		Iterator<Edge<String, InformacionArco>> it = actual.Vals().iterator();
+		while(it.hasNext() && i < grafo.E())
+		{
+			Edge<String, InformacionArco> elemento = it.next();
+			Vertex<String,InformacionVertice,InformacionArco> inicioVertice = grafo.getInfoVertexV(elemento.getIdVerticeInicio());
+			Vertex<String,InformacionVertice,InformacionArco> finalVertice = grafo.getInfoVertexV(elemento.getIdVerticeFinal());
+		    int numeroComparendosArco = 0;
+			
+			Iterator<Comparendo> it2 = comparendos.iterator();
+			while(it2.hasNext())
+			{
+				Comparendo actualComparendo = it2.next();
+                if(inicioVertice.getValorVertice().getLongitud() >= actualComparendo.getLongitud() && inicioVertice.getValorVertice().getLatitud() >= actualComparendo.getLatitud() && finalVertice.getValorVertice().getLongitud() <= actualComparendo.getLongitud() && finalVertice.getValorVertice().getLatitud() <= actualComparendo.getLatitud())
+                {
+                	numeroComparendosArco++;
+                }
+			}
+			i++;
+			String key = i + "";
+		    comparendosArcos.put(key, numeroComparendosArco);
 		}
 	}
 }
