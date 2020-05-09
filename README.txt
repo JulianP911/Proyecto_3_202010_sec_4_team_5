@@ -1,10 +1,8 @@
-/Users/palito/desktop/u/sistemas/Estructuras\ de\ datos/talleres/t7_202010/esqueleto_T7_202010-master 
-
-nombres: 
+Nombres: 
 Julián Padilla
 Pablo Pastrana Vega
 
-códigos:
+Códigos:
 JP: 201913677
 PP: 201822920
 
