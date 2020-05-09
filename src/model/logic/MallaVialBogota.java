@@ -22,9 +22,11 @@ import model.Arco;
 import model.InformacionArco;
 import model.InformacionVertice;
 import model.data_structures.Edge;
+import model.data_structures.LinkedQueue;
 import model.data_structures.SeparteChainingHashST;
 import model.data_structures.UnGraph;
 import model.data_structures.Vertex;
+import model.Comparendo;
 
 public class MallaVialBogota 
 {
@@ -51,6 +53,17 @@ public class MallaVialBogota
 	 */
 	@SuppressWarnings("unused")
 	private SeparteChainingHashST<String, Edge<String, InformacionArco>> arcos1;
+	
+	/**
+	 * Tabla de hash donde se guardan los comparendos segun el vertice mas cercano
+	 */
+	private SeparteChainingHashST<String, ArrayList<Comparendo>> comparendosVertice;
+	
+
+	/**
+	 * Instancia del Modelo
+	 */
+	private Modelo modelo;
 
 	// Metodo Constructor
 
@@ -63,6 +76,8 @@ public class MallaVialBogota
 		UnDiGraph1 = new UnGraph<String, InformacionVertice, InformacionArco>();
 		vertices1 = new SeparteChainingHashST<Integer, Vertex<String, InformacionVertice, InformacionArco>>();
 		arcos1 = new SeparteChainingHashST<String, Edge<String, InformacionArco>>();
+		comparendosVertice = new SeparteChainingHashST<String, ArrayList<Comparendo>>();
+		modelo = new Modelo();
 	}
 
 	// Metodos
@@ -353,5 +368,63 @@ public class MallaVialBogota
 		}
 		
 		return mensaje;
+	}
+	
+	/**
+	 * Dada una localizacion geografica con latitud y longitud, se busca el id del vertice de la malla vial mas cercano por distancia haversina
+	 * @return Id del vertice mas cercano
+	 */
+	public String darIdLocalizacion(double pLatitud, double pLongitud)
+	{
+		String mensaje = " ";
+		UnGraph<String, InformacionVertice, InformacionArco> grafo = cargarGrafo();
+		Vertex<String,InformacionVertice,InformacionArco> actual = grafo.getInfoVertexV("0");
+
+		for(int i = 0; i < grafo.V() ; i++)
+		{
+			String key = i + "";
+			Vertex<String,InformacionVertice,InformacionArco> elemento = grafo.getInfoVertexV(key);
+			
+			double distancia1 = getDistanceHaversian(actual.getValorVertice().getLatitud(), actual.getValorVertice().getLongitud(), pLatitud, pLongitud);
+			double distancia2 = getDistanceHaversian(elemento.getValorVertice().getLatitud(), elemento.getValorVertice().getLongitud(), pLatitud, pLongitud);
+			if(distancia2 < distancia1)
+			{
+				actual = elemento;
+			}
+		}
+
+		String vertice = actual.getIdVertice();
+		mensaje = vertice;
+
+		return mensaje;
+	}
+	
+	/**
+	 * Asociar comparendos al vertice mas cercano de donde fueron tomados los comparendos
+	 */
+	public void asociarComparendosVertice()
+	{
+		UnGraph<String, InformacionVertice, InformacionArco> grafo = cargarGrafo();
+		LinkedQueue<Comparendo> comparendos = modelo.cargarDatos2();
+
+		for(int i = 0; i < grafo.V() ; i++)
+		{
+			String key = i + "";
+			Vertex<String,InformacionVertice,InformacionArco> actualVertice = grafo.getInfoVertexV(key);
+			ArrayList<Comparendo> listaComparendos = new ArrayList<Comparendo>();
+			
+			Iterator<Comparendo> it = comparendos.iterator();
+			while(it.hasNext())
+			{
+				Comparendo actualComparendo = it.next();
+				double distancia1 = getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), actualComparendo.getLatitud(), actualComparendo.getLongitud());				
+                if(distancia1 < 0.005 )
+                {
+                	listaComparendos.add(actualComparendo);
+                }
+			}
+			
+			comparendosVertice.put(key, listaComparendos);
+		}
 	}
 }

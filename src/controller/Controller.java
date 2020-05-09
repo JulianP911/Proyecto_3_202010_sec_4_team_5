@@ -68,19 +68,21 @@ public class Controller {
 				break;
 				
 			case 2:
-				System.out.println("Ingresar la ruta par crear el archvio: ");
-				String entrada1 = lector.next();
-				System.out.println("Nombre del archivo añadir la extension (.json): ");
-				String entrada2 = lector.next();
-				System.out.println("El archivo .json tendrá: ");
-				mallaVial.generarJSON(entrada1, entrada2);
-				System.out.println("El archivo ha sido generado perfectamente en el direccion especificado");
+				view.printMessage("");
+				view.printMessage("Por favor ingresar una longitud a consultar: ");
+				double entrada1 = lector.nextDouble();
+				view.printMessage("Por favor ingresar una latitud a consultar: ");
+				double entrada2 = lector.nextDouble();
+				view.printMessage("El vertice mas cercano a las cordenadas de longitud y latitud ingresadas en la malla vial es: ");
+				view.printMessage(mallaVial.darIdLocalizacion(entrada2, entrada1));
+				view.printMessage("");
 				break;
 				
 			case 3:
-				System.out.println("El grafo desde el archivo JSON se esta cargando ...");
-				mallaVial.cargarGrafoJSON();
-				System.out.println("Se cargo adecuadamente");
+				view.printMessage("");
+				mallaVial.asociarComparendosVertice();
+				view.printMessage("El numero de comparendos asociados a los vertice es de: " + modelo.cargarDatos2().getSize());
+				view.printMessage("");
 				break;
 
 			case 4:
