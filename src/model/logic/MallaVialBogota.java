@@ -37,7 +37,7 @@ public class MallaVialBogota
 	 * Atributo para crear un grafo no dirigido
 	 */
 	private UnGraph<String, InformacionVertice, InformacionArco> UnDiGraph;
-	
+
 	/**
 	 * Atributo para crear un grafo no dirigido para el JSON
 	 */
@@ -54,22 +54,22 @@ public class MallaVialBogota
 	 */
 	@SuppressWarnings("unused")
 	private SeparteChainingHashST<String, Edge<String, InformacionArco>> arcos1;
-	
+
 	/**
 	 * Tabla de hash donde se guardan los comparendos segun el vertice mas cercano
 	 */
 	private SeparteChainingHashST<String, ArrayList<Comparendo>> comparendosVertice;
-	
+
 	/**
 	 * Tabla de hash donde se guardan los estaciones segun el vertic mas cercano
 	 */
 	private SeparteChainingHashST<String, EstacionPolicia> estacionesVertice;
-	
+
 	/**
 	 * Tabla de hash donde se guardan el id del arco con el numero de comparendos
 	 */
 	private SeparteChainingHashST<String, Integer> comparendosArcos;
-	
+
 
 	/**
 	 * Instancia del Modelo
@@ -118,7 +118,7 @@ public class MallaVialBogota
 
 		return EARTH_RADIUS * c; // <-- d
 	}
-	
+
 	/**
 	 * Haversin funcion matematica
 	 * @param val Valor de entrada
@@ -126,11 +126,11 @@ public class MallaVialBogota
 	 */
 	public static double haversin(double val)
 	{
-        return Math.pow(Math.sin(val / 2), 2);
-    }
-	
+		return Math.pow(Math.sin(val / 2), 2);
+	}
+
 	/**
-	 * Metodo para cargar grafo 
+	 * Metodo para cargar grafo costo del arco distancia
 	 */
 	public UnGraph<String, InformacionVertice, InformacionArco> cargarGrafo()
 	{
@@ -145,10 +145,10 @@ public class MallaVialBogota
 				vertices.add(linea);
 			}
 			bf.close();
-	
+
 			UnDiGraph = new UnGraph<String, InformacionVertice, InformacionArco>();
 			int numeroVertices = vertices.size();
-			
+
 			// Clico que crea los vertices del grafo no dirigido
 			for(int i = 0; vertices != null && i < numeroVertices; i++)
 			{
@@ -159,7 +159,7 @@ public class MallaVialBogota
 				double latitud = Double.parseDouble(valores[2]); 
 				UnDiGraph.addVertex(id, new InformacionVertice(longitud, latitud));
 			}
-			
+
 			// Carga de arcos en el la grafo no dirigido
 			BufferedReader bf1 = new BufferedReader(new FileReader("./data/bogota_arcos.txt"));
 			String linea1;
@@ -168,7 +168,7 @@ public class MallaVialBogota
 				arcos.add(linea1);
 			}
 			bf1.close();
-			
+
 			int numeroArcos = arcos.size();
 			for(int i = 0; arcos != null && i < numeroArcos; i++)
 			{
@@ -186,8 +186,8 @@ public class MallaVialBogota
 					UnDiGraph.addEdge(id, valores[j], new InformacionArco(pCosto));
 				}
 			}
-//			System.out.println("Numero de vertices: " + UnDiGraph.V());
-//			System.out.println("Numero de arcos: " + UnDiGraph.E());
+			//			System.out.println("Numero de vertices: " + UnDiGraph.V());
+			//			System.out.println("Numero de arcos: " + UnDiGraph.E());
 		}
 		catch (Exception e)
 		{
@@ -195,7 +195,80 @@ public class MallaVialBogota
 		}
 		return UnDiGraph;
 	}
-	
+
+	/**
+	 * Metodo para cargar grafo con costo de comparendos
+	 */
+	public UnGraph<String, InformacionVertice, InformacionArco> cargarGrafo2()
+	{
+		ArrayList<String> vertices = new ArrayList<String>();
+		ArrayList<String> arcos =new ArrayList<String>();
+		SeparteChainingHashST<String, Integer> costoArco = asociarComparendosArco1();
+		try
+		{
+			BufferedReader bf = new BufferedReader(new FileReader("./data/bogota_vertices.txt"));
+			String linea;
+			while((linea = bf.readLine()) != null)
+			{
+				vertices.add(linea);
+			}
+			bf.close();
+
+			UnDiGraph = new UnGraph<String, InformacionVertice, InformacionArco>();
+			int numeroVertices = vertices.size();
+
+			// Clico que crea los vertices del grafo no dirigido
+			for(int i = 0; vertices != null && i < numeroVertices; i++)
+			{
+				String lineaActual = vertices.get(i);
+				String[] valores = lineaActual.split(",");
+				String id = valores[0];
+				double longitud = Double.parseDouble(valores[1]); 
+				double latitud = Double.parseDouble(valores[2]); 
+				UnDiGraph.addVertex(id, new InformacionVertice(longitud, latitud));
+			}
+
+			// Carga de arcos en el la grafo no dirigido
+			BufferedReader bf1 = new BufferedReader(new FileReader("./data/bogota_arcos.txt"));
+			String linea1;
+			while((linea1 = bf1.readLine()) != null)
+			{
+				arcos.add(linea1);
+			}
+			bf1.close();
+
+			int numeroArcos = arcos.size();
+			for(int i = 0; arcos != null && i < numeroArcos; i++)
+			{
+				String lineaActual = arcos.get(i);
+				String[] valores = lineaActual.split(" ");
+				String id = valores[0];
+				for(int j = 1; j < valores.length; j++)
+				{
+					String arco = i + "";
+					if(costoArco.get(arco) != null)
+					{
+						int pCosto = costoArco.get(arco);
+						UnDiGraph.addEdge(id, valores[j], new InformacionArco(pCosto));
+					}
+					else
+					{
+						int pCosto = 0;
+						UnDiGraph.addEdge(id, valores[j], new InformacionArco(pCosto));
+					}
+					
+				}
+			}
+			System.out.println("Numero de vertices: " + UnDiGraph.V());
+			System.out.println("Numero de arcos: " + UnDiGraph.E());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return UnDiGraph;
+	}
+
 	/**
 	 * Metodo que genera el archivo .json con los arcos y vertices del grafo
 	 * @param filePath Direccion en donde se va a creear el archivo
@@ -208,7 +281,7 @@ public class MallaVialBogota
 		JSONObject obj = new JSONObject();
 		obj.put("type", "Collection Graph");
 		obj.put("name", "UnDiGraph - Malla Vial Bogota");
-		
+
 		JSONArray list = new JSONArray();
 		obj.put("Vertices", list);
 		for(int i = 0; i < UnDiGraph.V(); i++)
@@ -218,10 +291,10 @@ public class MallaVialBogota
 			obj1.put("Vertice", id);
 			obj1.put("Longitud", UnDiGraph.getInfoVertex(id).getLongitud());
 			obj1.put("Latitud", UnDiGraph.getInfoVertex(id).getLatitud());
-			
+
 			list.add(obj1);
 		}
-		
+
 		ArrayList<String> arcos = new ArrayList<String>();
 		ArrayList<Arco> arcos2 = new ArrayList<Arco>();
 		BufferedReader bf1;
@@ -234,7 +307,7 @@ public class MallaVialBogota
 				arcos.add(linea1);
 			}
 			bf1.close();
-			
+
 			int numeroArcos = arcos.size();
 			for(int i = 0; arcos != null && i < numeroArcos; i++)
 			{
@@ -251,7 +324,7 @@ public class MallaVialBogota
 					arcos2.add(new Arco(id, valores[j], pCosto));
 				}
 			}
-			
+
 			JSONArray list2 = new JSONArray();
 			obj.put("Arcos", list2);
 			for(int i = 0; i < arcos2.size(); i++)
@@ -261,7 +334,7 @@ public class MallaVialBogota
 				obj2.put("Arco Salida", actual.getArcoSalida());
 				obj2.put("Arco Entrada", actual.getArcoEntrada());
 				obj2.put("Distancia Haversiana", actual.getCosto());
-				
+
 				list2.add(obj2);
 			}
 		} 
@@ -273,7 +346,7 @@ public class MallaVialBogota
 		{
 			e.printStackTrace();
 		}
-		
+
 		try
 		{
 			File file = new File(filePath, fileName);
@@ -287,13 +360,13 @@ public class MallaVialBogota
 			System.out.println("Error: "+ ex.toString());
 		}
 	}
-	
+
 	/**
 	 * Ruta del archivo JSON creado en el punto anterior
 	 */
-//	public static String PATH = "./data/UnDiGraph_small.json";
+	//	public static String PATH = "./data/UnDiGraph_small.json";
 	public static String PATH = "./data/UnDiGraph_Complete.json";
-	
+
 	/**
 	 * Carga JSON del archivo generado en el requerimiento anterior
 	 */
@@ -315,9 +388,9 @@ public class MallaVialBogota
 				double latitud = e.getAsJsonObject().get("Latitud").getAsDouble();
 				UnDiGraph1.addVertex(id, new InformacionVertice(longitud, latitud));
 			}
-			
+
 			JsonArray e3 = elem.getAsJsonObject().get("Arcos").getAsJsonArray();
-			
+
 			for(JsonElement e: e3) 
 			{
 				String verticeSale = e.getAsJsonObject().get("Arco Salida").getAsString();
@@ -331,10 +404,10 @@ public class MallaVialBogota
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		return UnDiGraph1;
 	}
-	
+
 	/**
 	 * Muestra la informacion con el mayor ID del vertice
 	 * @return La informacion del veritice con el mayor ID
@@ -362,7 +435,7 @@ public class MallaVialBogota
 
 		return mensaje;
 	}
-	
+
 	/**
 	 * Muestra la informacion con el mayor ID del arco
 	 * @return La informacion del veritice con el mayor ID
@@ -379,10 +452,10 @@ public class MallaVialBogota
 			Edge<String, InformacionArco> elemento = it.next();
 			mensaje = grafo.E() + ", " + elemento.getIdVerticeInicio() + ", " + elemento.getIdVerticeFinal();
 		}
-		
+
 		return mensaje;
 	}
-	
+
 	/**
 	 * Dada una localizacion geografica con latitud y longitud, se busca el id del vertice de la malla vial mas cercano por distancia haversina
 	 * @return Id del vertice mas cercano
@@ -397,7 +470,7 @@ public class MallaVialBogota
 		{
 			String key = i + "";
 			Vertex<String,InformacionVertice,InformacionArco> elemento = grafo.getInfoVertexV(key);
-			
+
 			double distancia1 = getDistanceHaversian(actual.getValorVertice().getLatitud(), actual.getValorVertice().getLongitud(), pLatitud, pLongitud);
 			double distancia2 = getDistanceHaversian(elemento.getValorVertice().getLatitud(), elemento.getValorVertice().getLongitud(), pLatitud, pLongitud);
 			if(distancia2 < distancia1)
@@ -411,7 +484,7 @@ public class MallaVialBogota
 
 		return mensaje;
 	}
-	
+
 	/**
 	 * Asociar comparendos al vertice mas cercano de donde fueron tomados los comparendos
 	 */
@@ -419,28 +492,90 @@ public class MallaVialBogota
 	{
 		UnGraph<String, InformacionVertice, InformacionArco> grafo = cargarGrafo();
 		LinkedQueue<Comparendo> comparendos = modelo.cargarDatos2();
+		int NumComparendos = comparendos.getSize();
+		int j = 0;
 
-		for(int i = 0; i < grafo.V() ; i++)
+		for(int i = 0; i < grafo.V(); i++)
 		{
 			String key = i + "";
 			Vertex<String,InformacionVertice,InformacionArco> actualVertice = grafo.getInfoVertexV(key);
 			ArrayList<Comparendo> listaComparendos = new ArrayList<Comparendo>();
-			
+
 			Iterator<Comparendo> it = comparendos.iterator();
 			while(it.hasNext())
 			{
 				Comparendo actualComparendo = it.next();
 				double distancia1 = getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), actualComparendo.getLatitud(), actualComparendo.getLongitud());				
-                if(distancia1 < 0.005 )
-                {
-                	listaComparendos.add(actualComparendo);
-                }
+				if(distancia1 < 0.025 )
+				{
+					listaComparendos.add(actualComparendo);
+					j++;
+
+					if(j == NumComparendos)
+					{
+						break;
+					}
+				}
 			}
-			
-			comparendosVertice.put(key, listaComparendos);
+			if(comparendosVertice.contains(key) == false)
+			{
+				comparendosVertice.put(key, listaComparendos);
+			}		
+
+			if(j == NumComparendos)
+			{
+				break;
+			}
 		}
 	}
-	
+
+	/**
+	 * Asociar comparendos al vertice mas cercano de donde fueron tomados los comparendos
+	 * @return Tabla de hash con los comparendos asociados a los vertices
+	 */
+	public SeparteChainingHashST<String, ArrayList<Comparendo>> asociarComparendosVertice1()
+	{
+		UnGraph<String, InformacionVertice, InformacionArco> grafo = cargarGrafo();
+		LinkedQueue<Comparendo> comparendos = modelo.cargarDatos2();
+		SeparteChainingHashST<String, ArrayList<Comparendo>> nueva = comparendosVertice;
+		int NumComparendos = comparendos.getSize();
+		int j = 0;
+
+		for(int i = 0; i < grafo.V(); i++)
+		{
+			String key = i + "";
+			Vertex<String,InformacionVertice,InformacionArco> actualVertice = grafo.getInfoVertexV(key);
+			ArrayList<Comparendo> listaComparendos = new ArrayList<Comparendo>();
+
+			Iterator<Comparendo> it = comparendos.iterator();
+			while(it.hasNext())
+			{
+				Comparendo actualComparendo = it.next();
+				double distancia1 = getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), actualComparendo.getLatitud(), actualComparendo.getLongitud());				
+				if(distancia1 < 0.025 )
+				{
+					listaComparendos.add(actualComparendo);
+					j++;
+
+					if(j == NumComparendos)
+					{
+						break;
+					}
+				}
+			}
+			if(nueva.contains(key) == false)
+			{
+				nueva.put(key, listaComparendos);
+			}		
+
+			if(j == NumComparendos)
+			{
+				break;
+			}
+		}
+		return nueva;
+	}
+
 	/**
 	 * Asociar las estaciones de policia al vertice mas cercano
 	 */
@@ -448,33 +583,70 @@ public class MallaVialBogota
 	{
 		UnGraph<String, InformacionVertice, InformacionArco> grafo = cargarGrafo();
 		LinkedQueue<EstacionPolicia> estaciones = modelo.cargarDatosEstacionesPolicia2();
-
+		
 		for(int i = 0; i < grafo.V() ; i++)
 		{
 			String key = i + "";
 			Vertex<String,InformacionVertice,InformacionArco> actualVertice = grafo.getInfoVertexV(key);
-			
+
 			Iterator<EstacionPolicia> it = estaciones.iterator();
 			while(it.hasNext())
 			{
 				EstacionPolicia actualEstacion = it.next();
 				double distancia1 = getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), actualEstacion.getLatitud(), actualEstacion.getLongitud());				
-                if(distancia1 < 0.01 )
-                {
-                	estacionesVertice.put(key, actualEstacion);
-                }
+				if(distancia1 < 0.05 )
+				{	
+					if(estacionesVertice.contains(key) == false)
+					{
+						estacionesVertice.put(key, actualEstacion);
+					}
+				}
 			}
 		}
 	}
 	
 	/**
-	 * Asociar el total de comparendos entre los vértices que lo conenctan
+	 * Asociar las estaciones de policia al vertice mas cercano
+	 * @return Tabla de hash que asigna a cada vertice la estacion mas cercana
 	 */
-	public void asociarComparendosArcos()
+	public SeparteChainingHashST<String, EstacionPolicia> asociarEstacionesVertice1()
 	{
 		UnGraph<String, InformacionVertice, InformacionArco> grafo = cargarGrafo();
-		SeparteChainingHashST<Integer, Edge<String, InformacionArco>> actual = cargarGrafo().getArcosGrafo();
-		LinkedQueue<Comparendo> comparendos = modelo.cargarDatos2();
+		LinkedQueue<EstacionPolicia> estaciones = modelo.cargarDatosEstacionesPolicia2();
+		SeparteChainingHashST<String, EstacionPolicia> nueva = estacionesVertice;
+		
+		for(int i = 0; i < grafo.V() ; i++)
+		{
+			String key = i + "";
+			Vertex<String,InformacionVertice,InformacionArco> actualVertice = grafo.getInfoVertexV(key);
+
+			Iterator<EstacionPolicia> it = estaciones.iterator();
+			while(it.hasNext())
+			{
+				EstacionPolicia actualEstacion = it.next();
+				double distancia1 = getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), actualEstacion.getLatitud(), actualEstacion.getLongitud());				
+				if(distancia1 < 0.05 )
+				{	
+					if(nueva.contains(key) == false)
+					{
+						nueva.put(key, actualEstacion);
+					}
+				}
+			}
+		}
+
+		return nueva;
+	}
+
+	/**
+	 * Asociar el total de comparendos entre los vértices que lo conenctan teniendo en cuenta la latitud y longitud de los vertices
+	 */
+	public SeparteChainingHashST<String, Integer> asociarComparendosArco1()
+	{
+		UnGraph<String, InformacionVertice, InformacionArco> grafo = cargarGrafo();
+		SeparteChainingHashST<Integer, Edge<String, InformacionArco>> actual = grafo.getArcosGrafo();
+		SeparteChainingHashST<String, Integer> nuevo = comparendosArcos;
+		SeparteChainingHashST<String, ArrayList<Comparendo>> nueva = asociarComparendosVertice1();
 		
 		int i = 0;
 		Iterator<Edge<String, InformacionArco>> it = actual.Vals().iterator();
@@ -483,20 +655,52 @@ public class MallaVialBogota
 			Edge<String, InformacionArco> elemento = it.next();
 			Vertex<String,InformacionVertice,InformacionArco> inicioVertice = grafo.getInfoVertexV(elemento.getIdVerticeInicio());
 			Vertex<String,InformacionVertice,InformacionArco> finalVertice = grafo.getInfoVertexV(elemento.getIdVerticeFinal());
-		    int numeroComparendosArco = 0;
 			
-			Iterator<Comparendo> it2 = comparendos.iterator();
-			while(it2.hasNext())
+			int numeroComparendosArco = 0;
+			if(nueva.get(finalVertice.getIdVertice()) != null)
 			{
-				Comparendo actualComparendo = it2.next();
-                if(inicioVertice.getValorVertice().getLongitud() >= actualComparendo.getLongitud() && inicioVertice.getValorVertice().getLatitud() >= actualComparendo.getLatitud() && finalVertice.getValorVertice().getLongitud() <= actualComparendo.getLongitud() && finalVertice.getValorVertice().getLatitud() <= actualComparendo.getLatitud())
-                {
-                	numeroComparendosArco++;
-                }
+				int valorVertexIn = nueva.get(inicioVertice.getIdVertice()).size();
+
+				int valorVertexFn = nueva.get(finalVertice.getIdVertice()).size();
+				numeroComparendosArco = valorVertexIn + valorVertexFn;
 			}
+			
 			i++;
 			String key = i + "";
-		    comparendosArcos.put(key, numeroComparendosArco);
+			nuevo.put(key, numeroComparendosArco);
+		}
+		return nuevo;
+	}
+	
+	/**
+	 * Asociar el total de comparendos entre los vértices que lo conenctan teniendo en cuenta la latitud y longitud de los vertices
+	 */
+	public void asociarComparendosArcos()
+	{
+		UnGraph<String, InformacionVertice, InformacionArco> grafo = cargarGrafo();
+		SeparteChainingHashST<Integer, Edge<String, InformacionArco>> actual = grafo.getArcosGrafo();
+		SeparteChainingHashST<String, ArrayList<Comparendo>> nueva = asociarComparendosVertice1();
+		
+		int i = 0;
+		Iterator<Edge<String, InformacionArco>> it = actual.Vals().iterator();
+		while(it.hasNext() && i < grafo.E())
+		{
+			Edge<String, InformacionArco> elemento = it.next();
+			Vertex<String,InformacionVertice,InformacionArco> inicioVertice = grafo.getInfoVertexV(elemento.getIdVerticeInicio());
+			Vertex<String,InformacionVertice,InformacionArco> finalVertice = grafo.getInfoVertexV(elemento.getIdVerticeFinal());
+			
+			int numeroComparendosArco = 0;
+			if(nueva.get(finalVertice.getIdVertice()) != null)
+			{
+				int valorVertexIn = nueva.get(inicioVertice.getIdVertice()).size();
+
+				int valorVertexFn = nueva.get(finalVertice.getIdVertice()).size();
+				numeroComparendosArco = valorVertexIn + valorVertexFn;
+			}
+			
+			i++;
+			String key = i + "";
+			comparendosArcos.put(key, numeroComparendosArco);
 		}
 	}
 }

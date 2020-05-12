@@ -1,6 +1,7 @@
 package controller;
 
 import java.util.Scanner;
+
 import model.logic.MallaVialBogota;
 import model.logic.Modelo;
 import view.View;
@@ -95,7 +96,7 @@ public class Controller {
 				view.printMessage("El numero de estaciones de policia asociadas a los vertice en total es de: " + modelo.cargarDatosEstacionesPolicia2().getSize() + " en un total de 21 vertices (Estacion por vertice).");
 				view.printMessage("");
 				break;
-				
+
 			case 6:
 				lector.close();
 				fin = true;
