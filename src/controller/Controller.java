@@ -11,7 +11,7 @@ public class Controller {
 
 	/* Instancia del Modelo*/
 	private Modelo modelo;
-	
+
 	/* Instancia del Malla vial*/
 	private MallaVialBogota mallaVial;
 
@@ -45,7 +45,7 @@ public class Controller {
 				view.printMessage("");
 				int numeroComparendos = modelo.cargarDatos().size();
 				int numeroEstaciones = modelo.cargarDatosEstacionesPolicia().size();
-				
+
 				view.printMessage("El numero de comparendos tomados en el año 2018 es de: " + numeroComparendos);
 				view.printMessage("El comparendo con el mayor OBJECTID es: ");
 				view.printMessage(modelo.darObjectidMayorComparendo());
@@ -65,7 +65,7 @@ public class Controller {
 				view.printMessage(mallaVial.darIdMayorArco());
 				view.printMessage("");
 				break;
-				
+
 			case 2:
 				view.printMessage("");
 				view.printMessage("Por favor ingresar una longitud a consultar: ");
@@ -76,7 +76,7 @@ public class Controller {
 				view.printMessage(mallaVial.darIdLocalizacion(entrada2, entrada1));
 				view.printMessage("");
 				break;
-				
+
 			case 3:
 				view.printMessage("");
 				mallaVial.asociarComparendosVertice();
@@ -90,7 +90,7 @@ public class Controller {
 				view.printMessage("El numero de comparendos asociados a los arcos en total es de: " + modelo.cargarDatos2().getSize() + " en un total de 272457 arcos.");
 				view.printMessage("");
 				break;
-				
+
 			case 5:
 				view.printMessage("");
 				mallaVial.asociarEstacionesVertice();
@@ -98,12 +98,33 @@ public class Controller {
 				view.printMessage("");
 				break;
 
+				// Requerimiento 1A
 			case 6:
 				@SuppressWarnings("unused") 
 				Mapa actual = new Mapa(mallaVial.cargarGrafo() , "Grafo");
 				break;
-				
+
+				// Requerimiento 2A
 			case 7:
+				break;
+
+				// Requerimiento 1B
+			case 8:
+				break;
+
+				// Requerimiento 2B
+			case 9:
+				break;
+
+				// Requerimiento 1C
+			case 10:
+				break;
+				
+				// Requerimiento 2C
+			case 11:
+				break;
+
+			case 12:
 				lector.close();
 				fin = true;
 				break;
