@@ -21,6 +21,7 @@ import com.google.gson.stream.JsonReader;
 import model.Arco;
 import model.InformacionArco;
 import model.InformacionVertice;
+import model.data_structures.DijkstraSP;
 import model.data_structures.Edge;
 import model.data_structures.LinkedQueue;
 import model.data_structures.SeparteChainingHashST;
@@ -702,5 +703,222 @@ public class MallaVialBogota
 			String key = i + "";
 			comparendosArcos.put(key, numeroComparendosArco);
 		}
+	}
+	
+	public void inicializarGrafo()
+	{
+		UnGraph<String, InformacionVertice, InformacionArco> grafo = cargarGrafo();
+		UnDiGraph = grafo;
+	}
+	
+	/**
+	 * Aproxima la coordenada a un verice del grafo correspondiente
+	 * @param pCoordenada Coordenadas ingresada por el usuario
+	 * @return Una nueva coordenada que se encuentra en el grafo
+	 */
+	public String aproximarCordenadasVerticesGrafo(String pCoordenada)
+	{
+		inicializarGrafo();
+		String aproxCoordenada = "";
+		
+		String[] coordenadas = pCoordenada.split(",");
+		double latitud = Double.parseDouble(coordenadas[0]);
+		double longitud = Double.parseDouble(coordenadas[1]);
+		
+		SeparteChainingHashST<String,Vertex<String,InformacionVertice,InformacionArco>> veticesGrafo = UnDiGraph.getVerticesGrafo();
+		double temporalDistancia = Double.MAX_VALUE;
+		
+		Iterator<Vertex<String,InformacionVertice,InformacionArco>> it = veticesGrafo.Vals().iterator();
+		while(it.hasNext())
+		{
+			Vertex<String,InformacionVertice,InformacionArco> actualVertice = it.next();
+			double distanciaHaversiana = getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), latitud, longitud);
+			
+			if(distanciaHaversiana <= temporalDistancia)
+			{
+				temporalDistancia = distanciaHaversiana;
+				aproxCoordenada = actualVertice.getValorVertice().getLatitud() + "," + actualVertice.getValorVertice().getLongitud();
+			}
+		}
+		
+		return aproxCoordenada;
+	}
+	
+	/**
+	 * Aproxima la coordenada a un verice del grafo correspondiente
+	 * @param pCoordenada Coordenadas ingresada por el usuario
+	 * @return Una nueva coordenada que se encuentra en el grafo
+	 */
+	public Vertex<String,InformacionVertice,InformacionArco> aproximarCordenadasVerticesGrafoVer(String pCoordenada)
+	{
+		inicializarGrafo();
+		Vertex<String,InformacionVertice,InformacionArco> vertice = null;
+		
+		String[] coordenadas = pCoordenada.split(",");
+		double latitud = Double.parseDouble(coordenadas[0]);
+		double longitud = Double.parseDouble(coordenadas[1]);
+		
+		SeparteChainingHashST<String,Vertex<String,InformacionVertice,InformacionArco>> veticesGrafo = UnDiGraph.getVerticesGrafo();
+		double temporalDistancia = Double.MAX_VALUE;
+		
+		Iterator<Vertex<String,InformacionVertice,InformacionArco>> it = veticesGrafo.Vals().iterator();
+		while(it.hasNext())
+		{
+			Vertex<String,InformacionVertice,InformacionArco> actualVertice = it.next();
+			double distanciaHaversiana = getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), latitud, longitud);
+			
+			if(distanciaHaversiana <= temporalDistancia)
+			{
+				temporalDistancia = distanciaHaversiana;
+				vertice = actualVertice;
+			}
+		}
+		
+		return vertice;
+	}
+	
+	/**
+	 * Obtener el camino de costo minimo entre dos ubicaciones geograficas por distancia
+	 * @param pOrigen Punto de origen ingresado por el usuario
+	 * @param pDestino Punto de llegada ingresado por el usuario
+	 */
+	public void grafoMenorDistancia(Vertex<String,InformacionVertice,InformacionArco> pOrigen, Vertex<String,InformacionVertice,InformacionArco> pDestino)
+	{
+		inicializarGrafo();
+		String numVerticeInicio = pOrigen.getIdVertice();
+		String numVerticeFinal = pDestino.getIdVertice();
+		
+		int numeroVertices = 0;
+		int numeroArcos = 0;
+		double menorDistancia = Double.MAX_VALUE;
+		double promedioDistancia = 0;
+		ArrayList<Vertex<String,InformacionVertice,InformacionArco>> verticesRecorridos = new ArrayList<Vertex<String,InformacionVertice,InformacionArco>>();
+		
+		
+		DijkstraSP<String> dijkstra = new DijkstraSP<String>(UnDiGraph, numVerticeInicio);
+		
+		Iterable<Edge<String, InformacionArco>> recorrerRuta = dijkstra.pathTo(UnDiGraph.getInfoVertexInfo(numVerticeFinal), UnDiGraph);
+		if(recorrerRuta != null)
+		{
+			Iterator<Edge<String, InformacionArco>> it = recorrerRuta.iterator();
+			while(it.hasNext())
+			{
+				Edge<String, InformacionArco> actualArco = it.next();
+				Vertex<String,InformacionVertice, InformacionArco> vertice1 = UnDiGraph.getInfoVertexV(actualArco.getIdVerticeInicio());
+				Vertex<String,InformacionVertice, InformacionArco> vertice2 = UnDiGraph.getInfoVertexV(actualArco.getIdVerticeFinal());
+				double costo = actualArco.getCostArc().getCosto();
+				
+				if(!verticesRecorridos.contains(vertice1))
+				{
+					verticesRecorridos.add(vertice1);
+					numeroVertices++;
+				}
+				if(!verticesRecorridos.contains(vertice2))
+				{
+					verticesRecorridos.add(vertice2);
+					numeroVertices++;
+				}
+				
+				if(costo <= menorDistancia)
+				{
+					menorDistancia = costo;
+				}
+				
+				numeroArcos++;
+				promedioDistancia += costo;
+			}
+		}
+		
+		promedioDistancia = promedioDistancia / numeroArcos;
+		
+		System.out.println("El numero de vertices entre los dos puntos ingresados es: " + numeroVertices);
+		System.out.println("Los vertices recorridos entre los puntos son:");
+		for(int i = 0; i < verticesRecorridos.size(); i++)
+		{
+			Vertex<String,InformacionVertice,InformacionArco> actual = verticesRecorridos.get(i);
+			System.out.println(actual.getIdVertice() + ", " + actual.getValorVertice().getLatitud() + ", " + actual.getValorVertice().getLongitud());
+		}
+		System.out.println("La distancia con el menor costo mínimo es de: " + menorDistancia);
+		System.out.println("La distancia estimana es de: " + promedioDistancia);
+	}
+	
+	public UnGraph<String,InformacionVertice,InformacionArco> grafoMenorDistanciaPintar(Vertex<String,InformacionVertice,InformacionArco> pOrigen, Vertex<String,InformacionVertice,InformacionArco> pDestino)
+	{
+		inicializarGrafo();
+		String numVerticeInicio = pOrigen.getIdVertice();
+		String numVerticeFinal = pDestino.getIdVertice();
+		
+		UnGraph<String,InformacionVertice,InformacionArco> grafoDistancia = new UnGraph<String,InformacionVertice,InformacionArco>();		
+		DijkstraSP<String> dijkstra = new DijkstraSP<String>(UnDiGraph, numVerticeInicio);
+		
+		Iterable<Edge<String, InformacionArco>> recorrerRuta = dijkstra.pathTo(UnDiGraph.getInfoVertexInfo(numVerticeFinal), UnDiGraph);
+		if(recorrerRuta != null)
+		{
+			Iterator<Edge<String, InformacionArco>> it = recorrerRuta.iterator();
+			while(it.hasNext())
+			{
+				Edge<String, InformacionArco> actualArco = it.next();
+				Vertex<String,InformacionVertice, InformacionArco> vertice1 = UnDiGraph.getInfoVertexV(actualArco.getIdVerticeInicio());
+				Vertex<String,InformacionVertice, InformacionArco> vertice2 = UnDiGraph.getInfoVertexV(actualArco.getIdVerticeFinal());
+				
+				if(!grafoDistancia.getCointainsVertex(vertice1.getIdVertice()))
+				{
+					grafoDistancia.addVertex(vertice1.getIdVertice(), new InformacionVertice(vertice1.getValorVertice().getLongitud(), vertice1.getValorVertice().getLatitud()));
+				}
+				if(!grafoDistancia.getCointainsVertex(vertice2.getIdVertice()))
+				{
+					grafoDistancia.addVertex(vertice2.getIdVertice(), new InformacionVertice(vertice2.getValorVertice().getLongitud(), vertice2.getValorVertice().getLatitud()));
+				}
+				
+				grafoDistancia.addEdge(actualArco.getIdVerticeInicio(), actualArco.getIdVerticeFinal(), actualArco.getCostArc());
+				
+			}
+		}
+		
+		return grafoDistancia;
+	}
+	
+	/**
+	 * Proporciona los limetes de lat y longitu en Bogota
+	 * @return latMin,latMax,longMin,longMax
+	 */
+	public String darCoordenadasMaxYMinBogota()
+	{
+		inicializarGrafo();
+		double latMin = Double.MAX_VALUE;
+		double latMax = Double.MIN_VALUE;
+		double longMax = Double.MIN_VALUE;
+		double longMin = Double.MAX_VALUE;
+		
+		Iterator<Vertex<String,InformacionVertice,InformacionArco>> it = UnDiGraph.getVerticesGrafo().Vals().iterator();
+		while(it.hasNext())
+		{
+			Vertex<String,InformacionVertice,InformacionArco> actual = it.next();
+			double longitudVertice = actual.getValorVertice().getLongitud();
+			double latitudVertice = actual.getValorVertice().getLatitud();
+			double i = Math.abs(longitudVertice);
+			
+			if(latitudVertice <= latMin)
+			{
+				latMin = latitudVertice;
+			}
+			if(latitudVertice >= latMax)
+			{
+				latMax = latitudVertice;
+			}
+			
+			if(i <= longMin)
+			{
+				longMin = Math.abs(longitudVertice);
+			}
+			if(i >= longMax)
+			{
+				longMax = Math.abs(longitudVertice);
+			}
+			
+		}
+		
+		String coordenadas = latMin + "," + latMax + ",-" + longMin + ",-" + longMax;
+		return coordenadas;
 	}
 }

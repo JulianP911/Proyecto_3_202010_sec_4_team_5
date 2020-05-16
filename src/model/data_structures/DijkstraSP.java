@@ -40,7 +40,7 @@ public class DijkstraSP<K extends Comparable<K>>
 		distTo = new double[G.V()];
 		edgeTo = new Edge[G.V()];
 
-		Vertex<K,InformacionVertice,InformacionArco> vertice = G.getInfoVertexV(s);
+		Vertex<K,InformacionVertice,InformacionArco> vertice = G.getInfoVertexInfo(s);
 
 		for (int v = 0; v < G.V(); v++)
 			distTo[v] = Double.POSITIVE_INFINITY;

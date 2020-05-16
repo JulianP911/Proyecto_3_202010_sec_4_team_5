@@ -3,6 +3,9 @@ package controller;
 import java.util.Scanner;
 
 import Mapa.Mapa;
+import model.InformacionArco;
+import model.InformacionVertice;
+import model.data_structures.Vertex;
 import model.logic.MallaVialBogota;
 import model.logic.Modelo;
 import view.View;
@@ -100,8 +103,34 @@ public class Controller {
 
 				// Requerimiento 1A
 			case 6:
-				@SuppressWarnings("unused") 
-				Mapa actual = new Mapa(mallaVial.cargarGrafo() , "Grafo");
+				view.printMessage("Por favor ingresar la informacion del punto de origen (Formato: latitud,longitud):");
+				String puntoOrigen1 = lector.next();
+				view.printMessage("Por favor ingresar la informacion del punto de destino (Formato: latitud,longitud):");
+				String puntoDestino1 = lector.next();
+				String limites = mallaVial.darCoordenadasMaxYMinBogota();
+				
+				String[] arr1 = puntoOrigen1.split(",");
+				String[] arr2 = puntoDestino1.split(",");
+				String[] arr3 = limites.split(",");
+				
+				if(Double.parseDouble(arr1[0]) >= Double.parseDouble(arr3[0]) && Double.parseDouble(arr1[0]) <= Double.parseDouble(arr3[1]) && Double.parseDouble(arr1[1]) <= Double.parseDouble(arr3[2]) && Double.parseDouble(arr1[1]) >= Double.parseDouble(arr3[3])
+				&& Double.parseDouble(arr2[0]) >= Double.parseDouble(arr3[0]) && Double.parseDouble(arr2[0]) <= Double.parseDouble(arr3[1]) && Double.parseDouble(arr2[1]) <= Double.parseDouble(arr3[2]) && Double.parseDouble(arr2[1]) >= Double.parseDouble(arr3[3]))
+				{
+					Vertex<String,InformacionVertice,InformacionArco> origen1 = mallaVial.aproximarCordenadasVerticesGrafoVer(puntoOrigen1);
+					Vertex<String,InformacionVertice,InformacionArco> destino1 = mallaVial.aproximarCordenadasVerticesGrafoVer(puntoDestino1);
+
+					view.printMessage("");
+					mallaVial.grafoMenorDistancia(origen1, destino1);
+					view.printMessage("");
+					
+					@SuppressWarnings("unused") 
+					Mapa mapa1 = new Mapa(mallaVial.grafoMenorDistanciaPintar(origen1, destino1) , "Grafo");
+					
+				}
+				else
+				{
+					
+				}
 				break;
 
 				// Requerimiento 2A
@@ -110,6 +139,12 @@ public class Controller {
 
 				// Requerimiento 1B
 			case 8:
+				view.printMessage("Por favor ingresar la informacion del punto de origen (Formato: latitud,longitud):");
+				String puntoOrigen2 = lector.next();
+				view.printMessage("Por favor ingresar la informacion del punto de destino (Formato: latitud,longitud):");
+				String puntoDestino2 = lector.next();
+				String puntoOrigen2Aprox = mallaVial.aproximarCordenadasVerticesGrafo(puntoOrigen2);
+				String puntoDestino2Aprox = mallaVial.aproximarCordenadasVerticesGrafo(puntoDestino2);
 				break;
 
 				// Requerimiento 2B
@@ -118,6 +153,8 @@ public class Controller {
 
 				// Requerimiento 1C
 			case 10:
+				@SuppressWarnings("unused") 
+				Mapa actual1 = new Mapa(mallaVial.cargarGrafo() , "Grafo");
 				break;
 				
 				// Requerimiento 2C

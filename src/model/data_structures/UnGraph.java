@@ -194,6 +194,15 @@ public class UnGraph<K extends Comparable<K>,V,E>
 	{
 		return arcos;
 	}
+	
+	/**
+	 * Proporciona un tabla de hash con los vertices del grafo
+	 * @return Separate Chaining con la información
+	 */
+	public SeparteChainingHashST<K, Vertex<K,V,E>> getVerticesGrafo()
+	{
+		return vertices;
+	}
 
 	/**
 	 * Obtener informacion de un vertice si existe de lo contrario null
@@ -229,6 +238,29 @@ public class UnGraph<K extends Comparable<K>,V,E>
 		{
 			return null;
 		}	
+	}
+	
+	/**
+	 * Retorna si el vertice si esta en el grafo
+	 * @param idVertex Vertice a retorna
+	 * @return True si se encuntra en el grafo de lo contrario false
+	 */
+	public boolean getCointainsVertex(K idVertex)
+	{
+		Vertex<K,V,E> vertice = vertices.get(idVertex);
+		if(vertice != null)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}	
+	}
+	
+	public Vertex<K,V,E> getInfoVertexInfo(K informacion)
+	{
+		return vertices.get(informacion);
 	}
 	
 	/**
