@@ -1,6 +1,7 @@
 package model.data_structures;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Clase del Grafo no dirigido para Taller 7
@@ -219,15 +220,35 @@ public class UnGraph<K extends Comparable<K>,V,E>
 	 */
 	public Vertex<K,V,E> getInfoVertexV(K idVertex)
 	{
-		Vertex<K,V,E> v = vertices.get(idVertex);
-		if(v != null)
+		Vertex<K,V,E> vertice = vertices.get(idVertex);
+		if(vertice != null)
 		{
-			return v;
+			return vertice;
 		}
 		else
 		{
 			return null;
 		}	
+	}
+	
+	/**
+	 * Retorna el vertice correspondiente
+	 * @param idVertex Id del vertice a retonar
+	 * @return Vertice correspondiente al que ingresa
+	 */
+	public Vertex<K,V,E> getInfoVertexId(int idVertex)
+	{
+		Vertex<K,V,E> vertice = null;
+		Iterator<Vertex<K,V,E>> it = vertices.Vals().iterator();
+		while(it.hasNext())
+		{
+			Vertex<K,V,E> verticeActual = it.next();
+			if(verticeActual.getIdNumeroVertice() == idVertex)
+			{
+				vertice = verticeActual;
+			}
+		}
+		return vertice;
 	}
 
 	/**
