@@ -64,6 +64,15 @@ public class Vertex<K extends Comparable<K>,V,E>
 	}
 	
 	/**
+	 * Obtener el numero del vertice dentro del grafo
+	 * @return Numero del vertice
+	 */
+	public int getIdVerticeInt()
+	{
+		return (int) idVeritice;
+	}
+	
+	/**
 	 * Obtener el numero vertice con el valor en el grafo
 	 * @return Numero vertice con el valor
 	 */

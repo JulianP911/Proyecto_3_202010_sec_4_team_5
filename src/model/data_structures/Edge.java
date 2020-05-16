@@ -11,24 +11,24 @@ import model.InformacionArco;
 public class Edge<K extends Comparable<K>, V>
 {	
 	// Atributos
-	
+
 	/**
 	 * Vertice de incio en el grafo no dirigido
 	 */
 	private K idVerticeInicio;
-	
+
 	/**
 	 * Vertice de final en el grafo no dirigido
 	 */
 	private K idVerticeFinal;
-	
+
 	/**
 	 * Costo de distancia entre arcos
 	 */
 	private InformacionArco costoArco;
-	
+
 	// Metodo constructor
-	
+
 	/**
 	 * Inicializa los datos para tener los vertices que se conectan mediante un arco
 	 * @param pVerIni Vertice de inicio 
@@ -41,7 +41,7 @@ public class Edge<K extends Comparable<K>, V>
 		idVerticeFinal = pVerFin;
 		costoArco = (InformacionArco) pCost;
 	}
-	
+
 	/**
 	 * Obtener el vertice de inicio del grafo no dirigido
 	 * @return Vertice de inicio
@@ -50,7 +50,7 @@ public class Edge<K extends Comparable<K>, V>
 	{
 		return idVerticeInicio;
 	}
-	
+
 	/**
 	 * Obtener el vertice de final del grafo no dirigido
 	 * @return Vertice de final
@@ -59,22 +59,44 @@ public class Edge<K extends Comparable<K>, V>
 	{
 		return idVerticeFinal;
 	}
-	
+
 	/**
-     * Retorna el costo que tiene el arco
-     * @return Costo que tiene el arco
-     */
-    @SuppressWarnings("unchecked")
+	 * Retorna el costo que tiene el arco
+	 * @return Costo que tiene el arco
+	 */
+	@SuppressWarnings("unchecked")
 	public V getCostArc() 
-    {
-        return (V) costoArco;
-    }
-    
-    /**
-     * cambia el costo que tiene el arco
-     */
-    public void setCostArc(V pCost) 
-    {
-        costoArco = (InformacionArco) pCost;
-    }
+	{
+		return (V) costoArco;
+	}
+
+	/**
+	 * cambia el costo que tiene el arco
+	 */
+	public void setCostArc(V pCost) 
+	{
+		costoArco = (InformacionArco) pCost;
+	}
+
+	/*
+	 * Cambio al otro vertice utilizado en Lazy Prim
+	 */
+	public int other(int pVertex)
+	{
+		int v = (int) idVerticeInicio;
+		int w= (int) idVerticeFinal;
+
+		if(pVertex == v) 
+		{
+			return w;
+		}
+		else if (pVertex == w)
+		{
+			return v;
+		}
+		else 
+		{
+			throw new IllegalArgumentException("Illegal endpoint");
+		}
+	}
 }

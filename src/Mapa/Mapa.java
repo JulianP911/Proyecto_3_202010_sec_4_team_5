@@ -6,6 +6,14 @@ import javax.swing.JFrame;
 
 import com.teamdev.jxmaps.MapReadyHandler;
 import com.teamdev.jxmaps.swing.MapView;
+
+import model.InformacionArco;
+import model.InformacionVertice;
+import model.data_structures.Edge;
+import model.data_structures.SeparteChainingHashST;
+import model.data_structures.UnGraph;
+import model.data_structures.Vertex;
+
 import com.teamdev.jxmaps.*;
 
 public class Mapa extends MapView
@@ -24,8 +32,9 @@ public class Mapa extends MapView
 	 * Metodo constructor del mapa
 	 * @param pNombre Nombre del mapa
 	 */
-	public Mapa(String pNombre)
+	public Mapa(UnGraph<String, InformacionVertice, InformacionArco> grafo,String pNombre)
 	{
+		
 		JFrame frame = new JFrame(pNombre);
 		setOnMapReadyHandler(new MapReadyHandler() {
 			
@@ -42,7 +51,7 @@ public class Mapa extends MapView
 					map.setOptions(mapOptions);
 					map.setCenter(new LatLng(4.6097102, -74.081749));
 					map.setZoom(11.0);
-					pintarCirculosYPoligon(4.597714, 4.621360, -74.094723, -74.062707);
+					pintarTremendoGrafo(grafo);
 				}
 			}	
 		});
@@ -117,5 +126,56 @@ public class Mapa extends MapView
 		
 		Polygon union4 = new Polygon(map);
 		union4.setPath(arco4);
+	}
+	
+	/**
+	 * Pintar grafo en el mapa recibe un grafo como entrada
+	 */
+	public void pintarTremendoGrafo(UnGraph<String, InformacionVertice, InformacionArco>  grafoCarga)
+	{
+		SeparteChainingHashST<Integer, Edge<String, InformacionArco>> arcos= grafoCarga.getArcosGrafo();
+
+		int size=arcos.size();
+
+		int j=0;
+		while(j<size)
+		{
+			Edge<String, InformacionArco> rev= arcos.get(j);
+			String inicio = rev.getIdVerticeInicio();
+			String fin = rev.getIdVerticeFinal();
+
+			Vertex<String, InformacionVertice, InformacionArco> uno = grafoCarga.getInfoVertexV(inicio);
+			Vertex<String, InformacionVertice, InformacionArco> dos = grafoCarga.getInfoVertexV(fin);
+
+
+			LatLng[] arcs=new LatLng[2];
+			LatLng uan=new LatLng(uno.getValorVertice().getLatitud(), uno.getValorVertice().getLongitud());
+			LatLng tu= new LatLng(dos.getValorVertice().getLatitud(), dos.getValorVertice().getLongitud());
+			arcs[0]=uan;
+			arcs[1]=tu;
+
+			Circle ver1= new Circle(map);
+			ver1.setCenter(uan);
+			ver1.setRadius(1);
+			CircleOptions op= new CircleOptions();
+			op.setFillColor("#FF0000");
+			ver1.setOptions(op);
+			ver1.setVisible(true);
+
+
+			Circle ver2= new Circle(map);
+			ver2.setCenter(tu);
+			ver2.setRadius(1);
+			CircleOptions op2= new CircleOptions();
+			op2.setFillColor("#FF0000");
+			ver2.setOptions(op2);
+			ver2.setVisible(true);
+
+			Polygon w=new Polygon(map);
+			w.setPath(arcs);
+			w.setVisible(true);
+			j++;
+
+		}
 	}
 }

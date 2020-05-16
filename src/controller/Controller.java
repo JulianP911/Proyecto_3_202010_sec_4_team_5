@@ -2,6 +2,7 @@ package controller;
 
 import java.util.Scanner;
 
+import Mapa.Mapa;
 import model.logic.MallaVialBogota;
 import model.logic.Modelo;
 import view.View;
@@ -98,6 +99,11 @@ public class Controller {
 				break;
 
 			case 6:
+				@SuppressWarnings("unused") 
+				Mapa actual = new Mapa(mallaVial.cargarGrafo() , "Grafo");
+				break;
+				
+			case 7:
 				lector.close();
 				fin = true;
 				break;
