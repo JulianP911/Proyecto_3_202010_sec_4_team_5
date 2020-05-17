@@ -108,13 +108,13 @@ public class Controller {
 				view.printMessage("Por favor ingresar la informacion del punto de destino (Formato: latitud,longitud):");
 				String puntoDestino1 = lector.next();
 				String limites = mallaVial.darCoordenadasMaxYMinBogota();
-				
+
 				String[] arr1 = puntoOrigen1.split(",");
 				String[] arr2 = puntoDestino1.split(",");
 				String[] arr3 = limites.split(",");
-				
+
 				if(Double.parseDouble(arr1[0]) >= Double.parseDouble(arr3[0]) && Double.parseDouble(arr1[0]) <= Double.parseDouble(arr3[1]) && Double.parseDouble(arr1[1]) <= Double.parseDouble(arr3[2]) && Double.parseDouble(arr1[1]) >= Double.parseDouble(arr3[3])
-				&& Double.parseDouble(arr2[0]) >= Double.parseDouble(arr3[0]) && Double.parseDouble(arr2[0]) <= Double.parseDouble(arr3[1]) && Double.parseDouble(arr2[1]) <= Double.parseDouble(arr3[2]) && Double.parseDouble(arr2[1]) >= Double.parseDouble(arr3[3]))
+						&& Double.parseDouble(arr2[0]) >= Double.parseDouble(arr3[0]) && Double.parseDouble(arr2[0]) <= Double.parseDouble(arr3[1]) && Double.parseDouble(arr2[1]) <= Double.parseDouble(arr3[2]) && Double.parseDouble(arr2[1]) >= Double.parseDouble(arr3[3]))
 				{
 					Vertex<String,InformacionVertice,InformacionArco> origen1 = mallaVial.aproximarCordenadasVerticesGrafoVer(puntoOrigen1);
 					Vertex<String,InformacionVertice,InformacionArco> destino1 = mallaVial.aproximarCordenadasVerticesGrafoVer(puntoDestino1);
@@ -122,14 +122,14 @@ public class Controller {
 					view.printMessage("");
 					mallaVial.grafoMenorDistancia(origen1, destino1);
 					view.printMessage("");
-					
+
 					@SuppressWarnings("unused") 
 					Mapa mapa1 = new Mapa(mallaVial.grafoMenorDistanciaPintar(origen1, destino1) , "Grafo");
-					
+
 				}
 				else
 				{
-					
+					view.printMessage("Las coordenadas ingresadas no se encuantran dentro de los limites establecidos");
 				}
 				break;
 
@@ -143,12 +143,18 @@ public class Controller {
 				String puntoOrigen2 = lector.next();
 				view.printMessage("Por favor ingresar la informacion del punto de destino (Formato: latitud,longitud):");
 				String puntoDestino2 = lector.next();
-				String puntoOrigen2Aprox = mallaVial.aproximarCordenadasVerticesGrafo(puntoOrigen2);
-				String puntoDestino2Aprox = mallaVial.aproximarCordenadasVerticesGrafo(puntoDestino2);
+				String limites2 = mallaVial.darCoordenadasMaxYMinBogota();
+
+				String[] arr4 = puntoOrigen2.split(",");
+				String[] arr5 = puntoDestino2.split(",");
+				String[] arr6 = limites2.split(",");
+
 				break;
 
 				// Requerimiento 2B
 			case 9:
+				mallaVial.cargarGrafo2();
+				
 				break;
 
 				// Requerimiento 1C
@@ -156,7 +162,7 @@ public class Controller {
 				@SuppressWarnings("unused") 
 				Mapa actual1 = new Mapa(mallaVial.cargarGrafo() , "Grafo");
 				break;
-				
+
 				// Requerimiento 2C
 			case 11:
 				break;

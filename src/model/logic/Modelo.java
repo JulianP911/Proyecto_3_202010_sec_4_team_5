@@ -24,7 +24,7 @@ import model.data_structures.LinkedQueue;
 public class Modelo 
 {
 	public static String PATH = "./data/comparendos_DEI_2018_Bogotá_D.C_small.geojson";
-	//	public static String PATH = "./data/comparendos_DEI_2018_Bogotá_50000_.geojson";
+	public static String PATH3 = "./data/comparendos_DEI_2018_Bogotá_D.C_50000_.geojson";
     //	public static String PATH = "./data/comparendos_DEI_2018_Bogotá_D.C.geojson";
 	
 	/**
@@ -44,6 +44,60 @@ public class Modelo
 		try 
 		{
 			reader = new JsonReader(new FileReader(PATH));
+			JsonElement elem = JsonParser.parseReader(reader);
+			JsonArray e2 = elem.getAsJsonObject().get("features").getAsJsonArray();
+
+
+			SimpleDateFormat parser=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+			for(JsonElement e: e2) 
+			{
+				int OBJECTID = e.getAsJsonObject().get("properties").getAsJsonObject().get("OBJECTID").getAsInt();
+
+				String s = e.getAsJsonObject().get("properties").getAsJsonObject().get("FECHA_HORA").getAsString();
+				String cambio1 = s.replaceFirst("T", " ");
+				String cambio2 = cambio1.replaceAll("Z", "");
+				Date FECHA_HORA = parser.parse(cambio2); 
+
+				String MEDIO_DETE = e.getAsJsonObject().get("properties").getAsJsonObject().get("MEDIO_DETECCION").getAsString();
+				String CLASE_VEHI = e.getAsJsonObject().get("properties").getAsJsonObject().get("CLASE_VEHICULO").getAsString();
+				String TIPO_SERVI = e.getAsJsonObject().get("properties").getAsJsonObject().get("TIPO_SERVICIO").getAsString();
+				String INFRACCION = e.getAsJsonObject().get("properties").getAsJsonObject().get("INFRACCION").getAsString();
+				String DES_INFRAC = e.getAsJsonObject().get("properties").getAsJsonObject().get("DES_INFRACCION").getAsString();	
+				String LOCALIDAD = e.getAsJsonObject().get("properties").getAsJsonObject().get("LOCALIDAD").getAsString();
+				String MUNICIPIO = e.getAsJsonObject().get("properties").getAsJsonObject().get("MUNICIPIO").getAsString();
+
+				double longitud = e.getAsJsonObject().get("geometry").getAsJsonObject().get("coordinates").getAsJsonArray()
+						.get(0).getAsDouble();
+
+				double latitud = e.getAsJsonObject().get("geometry").getAsJsonObject().get("coordinates").getAsJsonArray()
+						.get(1).getAsDouble();
+
+				Comparendo nuevo = new Comparendo(OBJECTID, FECHA_HORA, DES_INFRAC, MEDIO_DETE, CLASE_VEHI, TIPO_SERVI, INFRACCION, LOCALIDAD, MUNICIPIO, longitud, latitud);
+				datos.add(nuevo);
+			}
+
+		} 
+		catch (FileNotFoundException | ParseException e) 
+		{
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		return datos;			
+	}
+	
+	/**
+	 * Metodo que hace la carga de los datos comparendos
+	 * @return Una lista con los comparendos leidos
+	 */
+	public List<Comparendo> cargarDatos1() 
+	{
+		List<Comparendo> datos = new ArrayList<Comparendo>();
+
+		JsonReader reader;
+		try 
+		{
+			reader = new JsonReader(new FileReader(PATH3));
 			JsonElement elem = JsonParser.parseReader(reader);
 			JsonArray e2 = elem.getAsJsonObject().get("features").getAsJsonArray();
 
@@ -206,6 +260,60 @@ public class Modelo
 		try 
 		{
 			reader = new JsonReader(new FileReader(PATH));
+			JsonElement elem = JsonParser.parseReader(reader);
+			JsonArray e2 = elem.getAsJsonObject().get("features").getAsJsonArray();
+
+
+			SimpleDateFormat parser=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+			for(JsonElement e: e2) 
+			{
+				int OBJECTID = e.getAsJsonObject().get("properties").getAsJsonObject().get("OBJECTID").getAsInt();
+
+				String s = e.getAsJsonObject().get("properties").getAsJsonObject().get("FECHA_HORA").getAsString();
+				String cambio1 = s.replaceFirst("T", " ");
+				String cambio2 = cambio1.replaceAll("Z", "");
+				Date FECHA_HORA = parser.parse(cambio2); 
+
+				String MEDIO_DETE = e.getAsJsonObject().get("properties").getAsJsonObject().get("MEDIO_DETECCION").getAsString();
+				String CLASE_VEHI = e.getAsJsonObject().get("properties").getAsJsonObject().get("CLASE_VEHICULO").getAsString();
+				String TIPO_SERVI = e.getAsJsonObject().get("properties").getAsJsonObject().get("TIPO_SERVICIO").getAsString();
+				String INFRACCION = e.getAsJsonObject().get("properties").getAsJsonObject().get("INFRACCION").getAsString();
+				String DES_INFRAC = e.getAsJsonObject().get("properties").getAsJsonObject().get("DES_INFRACCION").getAsString();	
+				String LOCALIDAD = e.getAsJsonObject().get("properties").getAsJsonObject().get("LOCALIDAD").getAsString();
+				String MUNICIPIO = e.getAsJsonObject().get("properties").getAsJsonObject().get("MUNICIPIO").getAsString();
+
+				double longitud = e.getAsJsonObject().get("geometry").getAsJsonObject().get("coordinates").getAsJsonArray()
+						.get(0).getAsDouble();
+
+				double latitud = e.getAsJsonObject().get("geometry").getAsJsonObject().get("coordinates").getAsJsonArray()
+						.get(1).getAsDouble();
+
+				Comparendo nuevo = new Comparendo(OBJECTID, FECHA_HORA, DES_INFRAC, MEDIO_DETE, CLASE_VEHI, TIPO_SERVI, INFRACCION, LOCALIDAD, MUNICIPIO, longitud, latitud);
+				datos.enqueue(nuevo);
+			}
+
+		} 
+		catch (FileNotFoundException | ParseException e) 
+		{
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		return datos;			
+	}
+	
+	/**
+	 * Metodo que hace la carga de los datos comparendos
+	 * @return Una cola con los comparendos leidos
+	 */
+	public LinkedQueue<Comparendo> cargarDatos3() 
+	{
+		LinkedQueue<Comparendo> datos = new LinkedQueue<Comparendo>();
+
+		JsonReader reader;
+		try 
+		{
+			reader = new JsonReader(new FileReader(PATH3));
 			JsonElement elem = JsonParser.parseReader(reader);
 			JsonArray e2 = elem.getAsJsonObject().get("features").getAsJsonArray();
 

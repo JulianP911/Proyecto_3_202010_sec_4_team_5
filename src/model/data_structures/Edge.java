@@ -26,6 +26,11 @@ public class Edge<K extends Comparable<K>, V>
 	 * Costo de distancia entre arcos
 	 */
 	private InformacionArco costoArco;
+	
+	/**
+	 * Costo de comparendos entre los arcos
+	 */
+	private int costoComparendos;
 
 	// Metodo constructor
 
@@ -40,6 +45,7 @@ public class Edge<K extends Comparable<K>, V>
 		idVerticeInicio = pVerIni;
 		idVerticeFinal = pVerFin;
 		costoArco = (InformacionArco) pCost;
+		costoComparendos = 0;
 	}
 
 	/**
@@ -76,6 +82,24 @@ public class Edge<K extends Comparable<K>, V>
 	public void setCostArc(V pCost) 
 	{
 		costoArco = (InformacionArco) pCost;
+	}
+	
+	/**
+	 * Ingresar numero de comparendos en el arco
+	 * @param pComparendos Comparendos en el arco
+	 */
+	public void setCostoCom(int pComparendos)
+	{
+		costoComparendos = pComparendos;
+	}
+
+	/**
+	 * Obtener el numero de arcos
+	 * @return Costo comparendos
+	 */
+	public int getCostoCom()
+	{
+		return costoComparendos;
 	}
 
 	/*

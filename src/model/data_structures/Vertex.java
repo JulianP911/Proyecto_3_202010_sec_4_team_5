@@ -2,6 +2,8 @@ package model.data_structures;
 
 import java.util.ArrayList;
 
+import model.Comparendo;
+
 /**
  * Clase de vetice de tipo generica K
  * @author Julian Padilla - Pablo Pastrana
@@ -41,6 +43,11 @@ public class Vertex<K extends Comparable<K>,V,E>
      * Arreglo con los arcos que entran al vertice
      */
     private ArrayList<Edge<K, E>> arcosEntran;
+    
+    /**
+     * Comparendos asociados al vertice
+     */
+    private LinkedQueue<Comparendo> cola;
 
     // Metodo constructor
     
@@ -52,6 +59,7 @@ public class Vertex<K extends Comparable<K>,V,E>
 		arcosEntran =  new ArrayList<Edge<K,E>>();
 		componenteConectado = -1;
 		idNumumeroVertice = pIdNumero;
+		cola = new LinkedQueue<Comparendo>();
 	}
 	
 	/**
@@ -159,5 +167,23 @@ public class Vertex<K extends Comparable<K>,V,E>
 			}
 		}
 		return encontrado;
+	}
+	
+	/**
+	 * Adiccionar comparendo al vertice en la cola
+	 * @param pComparendo
+	 */
+	public void adicionarComparendo(Comparendo pComparendo)
+	{
+		cola.enqueue(pComparendo);
+	}
+	
+	/**
+	 * Tamaño de la cola
+	 * @param pComparendo
+	 */
+	public int tamañoComparendos()
+	{
+		return cola.getSize();
 	}
 }
