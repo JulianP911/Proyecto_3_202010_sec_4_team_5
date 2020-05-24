@@ -107,8 +107,8 @@ public class Edge<K extends Comparable<K>, V>
 	 */
 	public int other(int pVertex)
 	{
-		int v = (int) idVerticeInicio;
-		int w= (int) idVerticeFinal;
+		int v = getIdInicio();
+		int w= getIdDestino();
 
 		if(pVertex == v) 
 		{
@@ -130,7 +130,9 @@ public class Edge<K extends Comparable<K>, V>
 	 */
 	public int getIdDestino()
 	{
-		return (int) getIdVerticeFinal();
+		String idDestino = (String) getIdVerticeFinal();
+		int verticeDestino = Integer.parseInt(idDestino);
+		return verticeDestino;
 	}
 	
 	/**
@@ -139,6 +141,8 @@ public class Edge<K extends Comparable<K>, V>
 	 */
 	public int getIdInicio()
 	{
-		return (int) getIdVerticeInicio();
+		String idInicio = (String) getIdVerticeInicio();
+		int verticeInicio = Integer.parseInt(idInicio);
+		return verticeInicio;
 	}
 }

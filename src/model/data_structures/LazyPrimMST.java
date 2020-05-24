@@ -1,6 +1,8 @@
 package model.data_structures;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
 
 import model.InformacionArco;
 import model.InformacionVertice;
@@ -12,17 +14,17 @@ public class LazyPrimMST <K extends Comparable<K>>
 	/**
 	 * Lista con los vertices no visitados
 	 */
-	private ArrayList<Vertex<K,InformacionVertice,InformacionArco>> unVisitedVertexes;
+	private List<Vertex<K,InformacionVertice,InformacionArco>> unVisitedVertexes;
 	
 	/**
 	 * Lista con el spanning tree
 	 */
-	private ListaEnlazada<Edge<K, InformacionArco>> spanningTree;
+	private List<Edge<K, InformacionArco>> spanningTree;
 	
 	/**
 	 * Heap con los arcos correspondientes
 	 */
-	private MinPQ<Edge<K,InformacionArco>> edgeHeap;
+	private PriorityQueue<Edge<K,InformacionArco>> edgeHeap;
 	
 	/**
 	 * Costo del spanning tree
@@ -39,8 +41,8 @@ public class LazyPrimMST <K extends Comparable<K>>
 	{
 		super();
 		this.unVisitedVertexes = unVisitedVertexes;
-		this.spanningTree = new ListaEnlazada<Edge<K, InformacionArco>>();
-		this.edgeHeap =  new MinPQ<Edge<K,InformacionArco>>();
+		this.spanningTree = new ArrayList<Edge<K,InformacionArco>>();
+		this.edgeHeap =  new PriorityQueue<Edge<K,InformacionArco>>();
 	}
 	
 	// Metodos
@@ -49,27 +51,28 @@ public class LazyPrimMST <K extends Comparable<K>>
 	 * Este metodo ejecuta el algoritmo de Prim
 	 * @param vertex Vertice incio del spanning tree
 	 */
-	@SuppressWarnings({ "unlikely-arg-type", "unchecked" })
-	public void primsAlgorithm(Vertex<K,InformacionVertice,InformacionArco> vertex)
+	@SuppressWarnings("unchecked")
+	public void primsAlgorithm(Vertex<K,InformacionVertice,InformacionArco> vertex, UnGraph<K,InformacionVertice,InformacionArco> G)
 	{
 		this.unVisitedVertexes.remove(vertex);
-		while(!unVisitedVertexes.isEmpty())
+		while (!unVisitedVertexes.isEmpty()) 
 		{
-			for(Edge<K,InformacionArco> edge: vertex.getArcosSaliente())
+			for (Edge<K,InformacionArco> edge : vertex.getArcosSaliente()) 
 			{
-				if(this.unVisitedVertexes.contains(edge.getIdVerticeFinal()))
+				Vertex<K,InformacionVertice,InformacionArco> vertice = G.getInfoVertexId(edge.getIdDestino());
+				if (this.unVisitedVertexes.contains(vertice)) 
 				{
-					this.edgeHeap.insert(edge);
+					this.edgeHeap.add(edge);
 				}
 			}
-			
-			Edge<K,InformacionArco> minEdge = this.edgeHeap.delMin();
-			
-			this.spanningTree.agregarNodoFinal(minEdge);
+
+			Edge<K,InformacionArco> minEdge = this.edgeHeap.remove();
+
+			this.spanningTree.add(minEdge);
 			this.costoTotal += minEdge.getCostArc().getCosto();
-			
+
 			vertex = (Vertex<K, InformacionVertice, InformacionArco>) minEdge.getIdVerticeFinal();
-			this.unVisitedVertexes.remove(vertex);;
+	        this.unVisitedVertexes.remove(vertex);
 		}
 	}
 	

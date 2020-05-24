@@ -22,9 +22,12 @@ import com.google.gson.stream.JsonReader;
 import model.Arco;
 import model.InformacionArco;
 import model.InformacionVertice;
+import model.data_structures.ComponentConnected;
 import model.data_structures.DijkstraSP;
 import model.data_structures.Edge;
+import model.data_structures.LazyPrimMST;
 import model.data_structures.LinkedQueue;
+import model.data_structures.PrimMST;
 import model.data_structures.SeparteChainingHashST;
 import model.data_structures.UnGraph;
 import model.data_structures.Vertex;
@@ -1164,5 +1167,30 @@ public class MallaVialBogota
 		System.out.println("El camino con menos comparendos es: " + menorComparendos);
 		System.out.println("La menor contidad de comparendos en la ruta es de: " + cantidadComparendos);
 		System.out.println("La distancia estimana es de: " + promedioDistancia);
+	}
+	
+	/**
+	 * Grafo con las conexiones utilizando el algoritmo de prim
+	 * @return Grafo con todas las conexiones en las cuales se deberian instalar camaras de seguridad
+	 */
+	public UnGraph<String,InformacionVertice,InformacionArco> redComunicacionesInstalacionCamerasBogota()
+	{
+		PrimMST<String> prim = new PrimMST<String>(UnDiGraph);
+		UnGraph<String,InformacionVertice,InformacionArco> grafo = prim.arbolMST(UnDiGraph);
+		return grafo;
+	}
+	
+	
+	public UnGraph<String,InformacionVertice,InformacionArco> redComunicacionesInstalacionCameras(int pSitios)
+	{
+		PrimMST<String> prim = new PrimMST<String>(UnDiGraph);
+		UnGraph<String,InformacionVertice,InformacionArco> grafo = prim.arbolVerticesMST(UnDiGraph, pSitios);
+		return grafo;
+	}
+	
+	public int cc()
+	{
+		ComponentConnected cc = new ComponentConnected(UnDiGraph);
+		return cc.count();
 	}
 }

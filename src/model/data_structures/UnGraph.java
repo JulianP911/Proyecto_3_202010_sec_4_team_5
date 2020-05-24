@@ -39,6 +39,11 @@ public class UnGraph<K extends Comparable<K>,V,E>
 	private SeparteChainingHashST<K, Vertex<K,V,E>> vertices;
 	
 	/**
+	 * Los vertices del grafo en un array list
+	 */
+	private ArrayList<Vertex<K,V,E>> vertices1;
+	
+	/**
 	 * Los arcos del grafo
 	 */
 	private SeparteChainingHashST<Integer, Edge<K, E>> arcos;
@@ -74,6 +79,7 @@ public class UnGraph<K extends Comparable<K>,V,E>
 	{
 		vertices = new SeparteChainingHashST<K, Vertex<K,V,E>>();
 		arcos = new SeparteChainingHashST<Integer, Edge<K, E>>();
+		vertices1 = new ArrayList<Vertex<K,V,E>>();
 		numeroVertices = 0;
 		numeroVertices = 0;
 		idReferenciaNum = 0;
@@ -158,6 +164,7 @@ public class UnGraph<K extends Comparable<K>,V,E>
 	{
 		Vertex<K,V,E> v = new Vertex<K,V,E>(idVertex, infoVertex, idReferenciaNum);
 		vertices.put(idVertex, v);
+		vertices1.add(v);
 		numeroVertices++;
 		idReferenciaNum++;
 	}
@@ -202,6 +209,15 @@ public class UnGraph<K extends Comparable<K>,V,E>
 	public SeparteChainingHashST<K, Vertex<K,V,E>> getVerticesGrafo()
 	{
 		return vertices;
+	}
+	
+	/**
+	 * Proporciona un tabla de hash con los vertices del grafo
+	 * @return Separate Chaining con la información
+	 */
+	public ArrayList<Vertex<K,V,E>> getVerticesGrafoArreglo()
+	{
+		return vertices1;
 	}
 
 	/**

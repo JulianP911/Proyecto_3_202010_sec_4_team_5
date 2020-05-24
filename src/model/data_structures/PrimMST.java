@@ -61,7 +61,8 @@ public class PrimMST<K extends Comparable<K>>
 	 * @param G Graph
 	 * @param s Index start in the graph
 	 */
-	private void prim(UnGraph<K,InformacionVertice,InformacionArco> G, int s) {
+	private void prim(UnGraph<K,InformacionVertice,InformacionArco> G, int s) 
+	{
 		distTo[s] = 0.0;
 		pq.insert(s, distTo[s]);
 		while (!pq.isEmpty()) 
@@ -78,20 +79,20 @@ public class PrimMST<K extends Comparable<K>>
 	 */
 	private void scan(UnGraph<K,InformacionVertice,InformacionArco> G, int v) 
 	{
-		Vertex<K,InformacionVertice,InformacionArco> vertice = G.getInfoVertexId(v);
-		marked[(int)v] = true;
-		for (int idVertices : G.adjPrim(vertice)) 
+		marked[v] = true;
+		if(G.getVerticesGrafoArreglo().get(v) != null)
 		{
-			Edge<K,InformacionArco> e = G.getInfoVertexId(v).buscarArcoA(idVertices);
-			int w = e.other(v);
-			if (marked[w]) continue;         // v-w is obsolete edge
-				if (e.getCostArc().getCosto() < distTo[w]) 
-				{
+			for (Edge<K,InformacionArco> e : G.getVerticesGrafoArreglo().get(v).getArcosSaliente())
+			{
+				int w = e.other(v);
+				if (marked[w]) continue;         // v-w is obsolete edge
+				if (e.getCostArc().getCosto() < distTo[w]) {
 					distTo[w] = e.getCostArc().getCosto();
 					edgeTo[w] = e;
 					if (pq.contains(w)) pq.decreaseKey(w, distTo[w]);
 					else                pq.insert(w, distTo[w]);
 				}
+			}
 		}
 	}
 
@@ -122,14 +123,37 @@ public class PrimMST<K extends Comparable<K>>
 		UnGraph<K,InformacionVertice,InformacionArco>  g = new UnGraph<K,InformacionVertice,InformacionArco>();
 		for (int v = 0; v < edgeTo.length; v++) 
 		{
-//			System.out.println(edgeTo.length);
 			Edge<K,InformacionArco> e = edgeTo[v];
 			if (e != null)
 			{
-				g.addVertex(e.getIdVerticeInicio(), new InformacionVertice(total.getInfoVertexId(e.getIdInicio()).getValorVertice().getLongitud(), total.getInfoVertexId(e.getIdInicio()).getValorVertice().getLatitud()));
-				g.addVertex(e.getIdVerticeInicio(), new InformacionVertice(total.getInfoVertexId(e.getIdDestino()).getValorVertice().getLongitud(), total.getInfoVertexId(e.getIdDestino()).getValorVertice().getLatitud()));
+				g.addVertex(e.getIdVerticeInicio(), new InformacionVertice(total.getVerticesGrafoArreglo().get(e.getIdInicio()).getValorVertice().getLongitud(), total.getVerticesGrafoArreglo().get(e.getIdInicio()).getValorVertice().getLatitud()));
+				g.addVertex(e.getIdVerticeFinal(), new InformacionVertice(total.getVerticesGrafoArreglo().get(e.getIdDestino()).getValorVertice().getLongitud(), total.getVerticesGrafoArreglo().get(e.getIdDestino()).getValorVertice().getLatitud()));
 				g.addEdge(e.getIdVerticeInicio(), e.getIdVerticeFinal(), new InformacionArco(e.getCostArc().getCosto()));
 			}
+		}
+		return g;
+	}
+	
+	/**
+	 * Return the graph of the result of Prim Algorithm
+	 * @param total UnGraph
+	 * @return The minimun spanning three
+	 */
+	public UnGraph<K,InformacionVertice,InformacionArco>  arbolVerticesMST(UnGraph<K,InformacionVertice,InformacionArco>  total, int pVertices)
+	{
+		int contadorVertices = 0;
+		UnGraph<K,InformacionVertice,InformacionArco>  g = new UnGraph<K,InformacionVertice,InformacionArco>();
+		for (int v = 0; v < edgeTo.length && contadorVertices < pVertices; v++) 
+		{
+			Edge<K,InformacionArco> e = edgeTo[v];
+			if (e != null)
+			{
+				g.addVertex(e.getIdVerticeInicio(), new InformacionVertice(total.getVerticesGrafoArreglo().get(e.getIdInicio()).getValorVertice().getLongitud(), total.getVerticesGrafoArreglo().get(e.getIdInicio()).getValorVertice().getLatitud()));
+				g.addVertex(e.getIdVerticeFinal(), new InformacionVertice(total.getVerticesGrafoArreglo().get(e.getIdDestino()).getValorVertice().getLongitud(), total.getVerticesGrafoArreglo().get(e.getIdDestino()).getValorVertice().getLatitud()));
+				g.addEdge(e.getIdVerticeInicio(), e.getIdVerticeFinal(), new InformacionArco(e.getCostArc().getCosto()));
+//			    contadorVertices++;
+			}
+			contadorVertices++;
 		}
 		return g;
 	}

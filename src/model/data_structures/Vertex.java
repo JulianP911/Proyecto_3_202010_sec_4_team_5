@@ -198,7 +198,7 @@ public class Vertex<K extends Comparable<K>,V,E>
 		{
 			Edge<K,E> arco = arcosSalen.get(i);
 			if(arco!=null)
-			listaAdyacentes[i] = (int) arco.getIdVerticeFinal();	
+			listaAdyacentes[i] = arco.getIdDestino();	
 		}
 		return listaAdyacentes;
 	}

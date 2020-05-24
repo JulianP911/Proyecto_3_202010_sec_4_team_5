@@ -136,6 +136,8 @@ public class Controller
 
 				// Requerimiento 2A
 			case 7:
+				view.printMessage("Ingrese el numero de vertices que se requieren: ");
+				int verticesM = lector.nextInt();
 				break;
 
 				// Requerimiento 1B
@@ -172,14 +174,14 @@ public class Controller
 
 				// Requerimiento 2B
 			case 9:
-				mallaVial.cargarGrafo2();
+//				Mapa actual1 = new Mapa(mallaVial.redComunicacionesInstalacionCameras(200) , "Grafo MST");
+				System.out.println(mallaVial.cc());
+//				mallaVial.redComunicacionesInstalacionCameras(4);
 				
 				break;
 
 				// Requerimiento 1C
 			case 10:
-				@SuppressWarnings("unused") 
-				Mapa actual1 = new Mapa(mallaVial.cargarGrafo() , "Grafo");
 				break;
 
 				// Requerimiento 2C
