@@ -186,4 +186,39 @@ public class Vertex<K extends Comparable<K>,V,E>
 	{
 		return cola.getSize();
 	}
+	
+	/**
+	 * Retorna la lista de IDs a los que es adyacente el vertice.
+	 * @return
+	 */
+	public int[] adj()
+	{
+		int[] listaAdyacentes = new int[arcosSalen.size()];
+		for(int i = 0; i< arcosSalen.size(); i++)
+		{
+			Edge<K,E> arco = arcosSalen.get(i);
+			if(arco!=null)
+			listaAdyacentes[i] = (int) arco.getIdVerticeFinal();	
+		}
+		return listaAdyacentes;
+	}
+	
+	/**
+	 * Buscar el arco conectado a A
+	 * @param pIdVertice Numero del vertice
+	 * @return Arco entre la conexión
+	 */
+	public Edge<K,E> buscarArcoA(int pIdVertice)
+	{
+		boolean seEncontro = false;
+		Edge<K,E> aRetornar = null;
+		for(int i = 0; i < arcosSalen.size()&&!seEncontro; i++)
+		{
+			if(arcosSalen.get(i).getIdDestino() == pIdVertice)
+			{
+				aRetornar = arcosSalen.get(i);
+			}
+		}
+		return aRetornar;
+	}
 }

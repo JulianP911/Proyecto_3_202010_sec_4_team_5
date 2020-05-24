@@ -123,4 +123,22 @@ public class Edge<K extends Comparable<K>, V>
 			throw new IllegalArgumentException("Illegal endpoint");
 		}
 	}
+	
+	/**
+	 * Da el vertice final del arco
+	 * @return Numero del vertice final
+	 */
+	public int getIdDestino()
+	{
+		return (int) getIdVerticeFinal();
+	}
+	
+	/**
+	 * Da el vertice inicio del arco
+	 * @return Numero del vertice inicial
+	 */
+	public int getIdInicio()
+	{
+		return (int) getIdVerticeInicio();
+	}
 }

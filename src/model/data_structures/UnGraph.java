@@ -511,4 +511,16 @@ public class UnGraph<K extends Comparable<K>,V,E>
 		}
 		return cola; 
 	}
+	
+	/**
+	 * Retorna los identificadores de los vértices adyacentes a idVertex.
+	 * @param idVertex
+	 * @return
+	 */
+	public int[] adjPrim(Vertex<K,V,E> idVertex)
+	{
+		int idVer = idVertex.getIdNumeroVertice();
+		Vertex<K,V,E> v = getInfoVertexId(idVer);
+		return v.adj();
+	}
 }

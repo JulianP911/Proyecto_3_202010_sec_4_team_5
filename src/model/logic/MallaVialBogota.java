@@ -214,7 +214,7 @@ public class MallaVialBogota
 
 		try
 		{
-			BufferedReader bf = new BufferedReader(new FileReader("./data/ComparendosVertices.txt"));
+			BufferedReader bf = new BufferedReader(new FileReader("./data/ComparendosArcos.txt"));
 			String linea;
 			while((linea = bf.readLine()) != null)
 			{
@@ -274,10 +274,7 @@ public class MallaVialBogota
 					double pCosto = Double.parseDouble(costo[1]);
 					UnDiGraph1.addEdge(id, valores[j], new InformacionArco(pCosto));
 					j++;
-					if(j < valores.length)
-					{
-						arcosCom++;
-					}
+					arcosCom++;
 				}
 			}
 //			System.out.println("Numero de vertices: " + UnDiGraph1.V());
@@ -287,7 +284,7 @@ public class MallaVialBogota
 		{
 			e.printStackTrace();
 		}
-		return UnDiGraph;
+		return UnDiGraph1;
 	}
 
 	/**
@@ -1012,6 +1009,12 @@ public class MallaVialBogota
 		System.out.println("La distancia estimana es de: " + promedioDistancia);
 	}
 
+	/**
+	 * Crear grafo para poder ser pintado en el mapa correspodientemente
+	 * @param pOrigen Origen establecido por el usuario
+	 * @param pDestino Destino establecido por el usuario
+	 * @return Grafo para ser pintado en el mapa
+	 */
 	public UnGraph<String,InformacionVertice,InformacionArco> grafoMenorDistanciaPintar(Vertex<String,InformacionVertice,InformacionArco> pOrigen, Vertex<String,InformacionVertice,InformacionArco> pDestino)
 	{
 		String numVerticeInicio = pOrigen.getIdVertice();
@@ -1088,5 +1091,78 @@ public class MallaVialBogota
 
 		String coordenadas = latMin + "," + latMax + ",-" + longMin + ",-" + longMax;
 		return coordenadas;
+	}
+	
+	/**
+	 * Obtener el camino de costo minimo entre dos ubicaciones geograficas por cantidad de comparendos
+	 * @param pOrigen Punto de origen ingresado por el usuario
+	 * @param pDestino Punto de llegada ingresado por el usuario
+	 */
+	public void grafoMenorComparendos(Vertex<String,InformacionVertice,InformacionArco> pOrigen, Vertex<String,InformacionVertice,InformacionArco> pDestino)
+	{
+		String numVerticeInicio = pOrigen.getIdVertice();
+		String numVerticeFinal = pDestino.getIdVertice();
+
+		int numeroVertices = 0;
+		int numeroArcos = 0;
+		double menorComparendos = Double.MAX_VALUE;
+		double promedioDistancia = 0;
+		int cantidadComparendos = 0;
+		ArrayList<Vertex<String,InformacionVertice,InformacionArco>> verticesRecorridos = new ArrayList<Vertex<String,InformacionVertice,InformacionArco>>();
+
+
+		DijkstraSP<String> dijkstra = new DijkstraSP<String>(UnDiGraph1, numVerticeInicio);
+		DijkstraSP<String> dijkstra1 = new DijkstraSP<String>(UnDiGraph, numVerticeInicio);
+		
+		Iterable<Edge<String, InformacionArco>> recorrerRuta = dijkstra.pathTo(UnDiGraph1.getInfoVertexInfo(numVerticeFinal), UnDiGraph1);
+		Iterable<Edge<String, InformacionArco>> recorrerRuta1 = dijkstra1.pathTo(UnDiGraph.getInfoVertexInfo(numVerticeFinal), UnDiGraph);
+
+		if(recorrerRuta != null)
+		{
+			Iterator<Edge<String, InformacionArco>> it = recorrerRuta.iterator();
+			Iterator<Edge<String, InformacionArco>> it1 = recorrerRuta1.iterator();
+			while(it.hasNext() && it1.hasNext())
+			{
+				Edge<String, InformacionArco> actualArco = it.next();
+				Edge<String, InformacionArco> actualArco1 = it1.next();
+				Vertex<String,InformacionVertice, InformacionArco> vertice1 = UnDiGraph1.getInfoVertexV(actualArco.getIdVerticeInicio());
+				Vertex<String,InformacionVertice, InformacionArco> vertice2 = UnDiGraph1.getInfoVertexV(actualArco.getIdVerticeFinal());
+				double costo = actualArco.getCostArc().getCosto();
+				double costo1 = actualArco1.getCostArc().getCosto();
+
+				if(!verticesRecorridos.contains(vertice1))
+				{
+					verticesRecorridos.add(vertice1);
+					numeroVertices++;
+				}
+				if(!verticesRecorridos.contains(vertice2))
+				{
+					verticesRecorridos.add(vertice2);
+					numeroVertices++;
+				}
+
+				if(costo <= menorComparendos)
+				{
+					menorComparendos = (int) costo;
+					cantidadComparendos += (int) costo;
+				}
+
+				numeroArcos++;
+				promedioDistancia += costo1;
+			}
+		}
+
+		promedioDistancia = promedioDistancia / numeroArcos;
+
+		System.out.println("El numero de vertices entre los dos puntos ingresados es: " + numeroVertices);
+		System.out.println("Los vertices recorridos entre los puntos son:");
+		for(int i = 0; i < verticesRecorridos.size(); i++)
+		{
+			Vertex<String,InformacionVertice,InformacionArco> actual = verticesRecorridos.get(i);
+			System.out.println(actual.getIdVertice() + ", " + actual.getValorVertice().getLatitud() + ", " + actual.getValorVertice().getLongitud());
+		}
+		System.out.println("El camino con menos comparendos es: " + menorComparendos);
+		System.out.println("La menor contidad de comparendos en la ruta es de: " + cantidadComparendos);
+		System.out.println("La distancia estimana es de: " + promedioDistancia);
 	}
 }

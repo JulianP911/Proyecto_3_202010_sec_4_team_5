@@ -10,7 +10,8 @@ import model.logic.MallaVialBogota;
 import model.logic.Modelo;
 import view.View;
 
-public class Controller {
+public class Controller 
+{
 
 	/* Instancia del Modelo*/
 	private Modelo modelo;
@@ -83,14 +84,14 @@ public class Controller {
 			case 3:
 				view.printMessage("");
 				mallaVial.asociarComparendosVertice();
-				view.printMessage("El numero de comparendos asociados a los vertice en total es de: " + modelo.cargarDatos2().getSize() + " en un total de 228046 vertices.");
+				view.printMessage("El numero de comparendos asociados a los vertice en total es de: " + modelo.cargarDatos3().getSize() + " en un total de 228046 vertices.");
 				view.printMessage("");
 				break;
 
 			case 4:
 				view.printMessage("");
 				mallaVial.asociarComparendosArcos();
-				view.printMessage("El numero de comparendos asociados a los arcos en total es de: " + modelo.cargarDatos2().getSize() + " en un total de 272457 arcos.");
+				view.printMessage("El numero de comparendos asociados a los arcos en total es de: " + modelo.cargarDatos3().getSize() + " en un total de 272457 arcos.");
 				view.printMessage("");
 				break;
 
@@ -149,6 +150,24 @@ public class Controller {
 				String[] arr5 = puntoDestino2.split(",");
 				String[] arr6 = limites2.split(",");
 
+				if(Double.parseDouble(arr4[0]) >= Double.parseDouble(arr6[0]) && Double.parseDouble(arr4[0]) <= Double.parseDouble(arr6[1]) && Double.parseDouble(arr4[1]) <= Double.parseDouble(arr6[2]) && Double.parseDouble(arr4[1]) >= Double.parseDouble(arr6[3])
+						&& Double.parseDouble(arr5[0]) >= Double.parseDouble(arr6[0]) && Double.parseDouble(arr5[0]) <= Double.parseDouble(arr6[1]) && Double.parseDouble(arr5[1]) <= Double.parseDouble(arr6[2]) && Double.parseDouble(arr5[1]) >= Double.parseDouble(arr6[3]))
+				{
+					Vertex<String,InformacionVertice,InformacionArco> origen2 = mallaVial.aproximarCordenadasVerticesGrafoVer(puntoOrigen2);
+					Vertex<String,InformacionVertice,InformacionArco> destino2 = mallaVial.aproximarCordenadasVerticesGrafoVer(puntoDestino2);
+
+					view.printMessage("");
+					mallaVial.grafoMenorComparendos(origen2, destino2);
+					view.printMessage("");
+
+					@SuppressWarnings("unused") 
+					Mapa mapa1 = new Mapa(mallaVial.grafoMenorDistanciaPintar(origen2, destino2) , "Grafo");
+
+				}
+				else
+				{
+					view.printMessage("Las coordenadas ingresadas no se encuantran dentro de los limites establecidos");
+				}
 				break;
 
 				// Requerimiento 2B
