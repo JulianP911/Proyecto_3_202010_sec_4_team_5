@@ -8,7 +8,7 @@ import model.InformacionVertice;
  * Consultado el 15/11/19
  * Disponible en https://algs4.cs.princeton.edu/code/
  */
-public class PrimMST<K extends Comparable<K>> 
+public class PrimMST2<K extends Comparable<K>> 
 {
 	/**
 	 * Constante flotante epsilon
@@ -36,19 +36,19 @@ public class PrimMST<K extends Comparable<K>>
 	/**
 	 * Index Min PQ
 	 */
-	private IndexMinPQ<Double> pq;
+	private IndexMaxPQ<Double> pq;
 	
 	/**
 	 * Compute a minimum spanning tree (or forest) of an edge-weighted graph.
 	 * @param G the edge-weighted graph
 	 */
 	@SuppressWarnings("unchecked")
-	public PrimMST(UnGraph<K,InformacionVertice,InformacionArco> G) 
+	public PrimMST2(UnGraph<K,InformacionVertice,InformacionArco> G) 
 	{
 		edgeTo = new Edge[G.V()];
 		distTo = new double[G.V()];
 		marked = new boolean[G.V()];
-		pq = new IndexMinPQ<Double>(G.V());
+		pq = new IndexMaxPQ<Double>(G.V());
 		for (int v = 0; v < G.V(); v++)
 			distTo[v] = Double.POSITIVE_INFINITY;
 
@@ -67,7 +67,7 @@ public class PrimMST<K extends Comparable<K>>
 		pq.insert(s, distTo[s]);
 		while (!pq.isEmpty()) 
 		{
-			int v = pq.delMin();
+			int v = pq.delMax();
 			scan(G,v);
 		}
 	}
@@ -142,7 +142,6 @@ public class PrimMST<K extends Comparable<K>>
 	public UnGraph<K,InformacionVertice,InformacionArco>  arbolVerticesMST(UnGraph<K,InformacionVertice,InformacionArco>  total, int pVertices)
 	{
 		int contadorVertices = 0;
-//		double costoMST = 0;
 		UnGraph<K,InformacionVertice,InformacionArco>  g = new UnGraph<K,InformacionVertice,InformacionArco>();
 		for (int v = 0; v < edgeTo.length && contadorVertices < pVertices; v++) 
 		{
@@ -152,11 +151,10 @@ public class PrimMST<K extends Comparable<K>>
 				g.addVertex(e.getIdVerticeInicio(), new InformacionVertice(total.getVerticesGrafoArreglo().get(e.getIdInicio()).getValorVertice().getLongitud(), total.getVerticesGrafoArreglo().get(e.getIdInicio()).getValorVertice().getLatitud()));
 				g.addVertex(e.getIdVerticeFinal(), new InformacionVertice(total.getVerticesGrafoArreglo().get(e.getIdDestino()).getValorVertice().getLongitud(), total.getVerticesGrafoArreglo().get(e.getIdDestino()).getValorVertice().getLatitud()));
 				g.addEdge(e.getIdVerticeInicio(), e.getIdVerticeFinal(), new InformacionArco(e.getCostArc().getCosto()));
-//				costoMST += e.getCostArc().getCosto();
+//			    contadorVertices++;
 			}
 			contadorVertices++;
 		}
-//		System.out.println(costoMST);
 		return g;
 	}
 
@@ -171,11 +169,4 @@ public class PrimMST<K extends Comparable<K>>
 			weight += e.getCostArc().getCosto();
 		return weight;
 	}
-	
-	/**
-	 * Peso del sub grafo generado a partir de los requerimientos del usuario
-	 * @param total Grafo
-	 * @return Peso del sub grafo
-	 */
-	
 }

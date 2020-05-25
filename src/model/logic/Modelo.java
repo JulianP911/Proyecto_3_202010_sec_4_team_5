@@ -474,7 +474,7 @@ public class Modelo
 	public MaxColaCP<Comparendo> darColaPrioridadMaxCP()
 	{
 		MaxColaCP<Comparendo> colaPrioridad = new MaxColaCP<Comparendo>();
-		datos1 = cargarDatos();
+		datos1 = cargarDatos1();
 		shuffle(datos1);
 
 		Iterator<Comparendo> it = datos1.iterator();

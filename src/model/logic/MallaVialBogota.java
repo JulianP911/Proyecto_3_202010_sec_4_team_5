@@ -9,7 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Random;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -25,7 +27,6 @@ import model.InformacionVertice;
 import model.data_structures.ComponentConnected;
 import model.data_structures.DijkstraSP;
 import model.data_structures.Edge;
-import model.data_structures.LazyPrimMST;
 import model.data_structures.LinkedQueue;
 import model.data_structures.PrimMST;
 import model.data_structures.SeparteChainingHashST;
@@ -1180,14 +1181,93 @@ public class MallaVialBogota
 		return grafo;
 	}
 	
-	
-	public UnGraph<String,InformacionVertice,InformacionArco> redComunicacionesInstalacionCameras(int pSitios)
-	{
+	/**
+	 * Grafo teniendo en cuenta el numero de comparendos de mayor grado
+	 * @param pSitios Sitios en donde se presentan estos comparendos
+	 * @return
+	 */
+	public UnGraph<String,InformacionVertice,InformacionArco> redComunicacionesInstalacionCamaras(int pSitios)
+	{	
 		PrimMST<String> prim = new PrimMST<String>(UnDiGraph);
 		UnGraph<String,InformacionVertice,InformacionArco> grafo = prim.arbolVerticesMST(UnDiGraph, pSitios);
 		return grafo;
 	}
 	
+	/**
+	 * Informacion de la red de comunicaciones de la instalacion de camaras
+	 * @param pComparendos Comparendos de mayor gravedad asignados a los vertices 
+	 */
+	public void informacionRedComunicacionesInstalacioneCamera(int pComparendos)
+	{
+		UnGraph<String,InformacionVertice,InformacionArco> grafo =redComunicacionesInstalacionCamaras(pComparendos);
+		ArrayList<Comparendo> comparendosMayorGravedad = new ArrayList<Comparendo>();
+		
+		Comparendo[] comparendos = modelo.organizarComparendosMayorGravedad();
+		for(int i = 0; i < comparendos.length; i++)
+		{
+			Comparendo actual = comparendos[i];
+			comparendosMayorGravedad.add(actual);
+		}
+		
+		String cadenaVertices1 = "";
+		String cadenaVertices2 = "";
+		
+		System.out.println("Identificadores de los vertices que hacen parte de la red de camaras: ");
+		for(int i = 0; i < grafo.getVerticesGrafoArreglo().size(); i++)
+		{
+			Vertex<String,InformacionVertice,InformacionArco> verticeActual = grafo.getVerticesGrafoArreglo().get(i);
+			cadenaVertices1 += verticeActual.getIdVertice() + ", ";
+		}
+		
+		ordenVertices(grafo.getVerticesGrafoArreglo());
+		for(int i = 0; i < grafo.getVerticesGrafoArreglo().size(); i++)
+		{
+			Vertex<String,InformacionVertice,InformacionArco> verticeActual = grafo.getVerticesGrafoArreglo().get(i);
+			cadenaVertices2 += verticeActual.getIdVertice() + ", ";
+		}
+		
+		System.out.println("- Vertices desorganizados: ");
+		System.out.println(cadenaVertices2);
+		System.out.println("- Vertices organizados: ");
+		System.out.println(cadenaVertices1);
+		System.out.println(" ");
+		
+		String cadenaArcos = "";
+		double costoAcomulado = 0;
+		
+		System.out.println("Arcos que comprenden la red de comunicaciones de la instalacion de camaras de video: ");
+		for(int i = 0; i < grafo.getArcosGrafoArreglo().size(); i++)
+		{
+			Edge<String,InformacionArco> arcoActual = grafo.getArcosGrafoArreglo().get(i);
+			cadenaArcos += arcoActual.getIdVerticeInicio() + "-" + arcoActual.getIdVerticeFinal() + ", ";
+			costoAcomulado += arcoActual.getCostArc().getCosto();
+		}
+		
+		System.out.println(cadenaArcos);
+		System.out.println(" ");
+		
+		double precioKilometro = costoAcomulado * 10000;
+		System.out.println("Costo monetario total de la instalacion de la red es de: " + precioKilometro + " dolares.");	
+	}
+	
+	/**
+	 * Teniendo los vertices los desordena de la lista
+	 * @param list Lista de v
+	 */
+	public void ordenVertices(ArrayList<Vertex<String,InformacionVertice,InformacionArco>> list) 
+	{
+		Random random = new Random(); 
+		int count = list.size() - 1;
+		for (int i = count; i > 1; i--) 
+		{
+			Collections.swap(list, i, random.nextInt(i));
+		} 
+	}
+	
+	/**
+	 * Numero de componentes conectados en el grafo
+	 * @return Numero de componentes conectados
+	 */
 	public int cc()
 	{
 		ComponentConnected cc = new ComponentConnected(UnDiGraph);

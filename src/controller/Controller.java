@@ -3,6 +3,7 @@ package controller;
 import java.util.Scanner;
 
 import Mapa.Mapa;
+import Mapa.Mapa3;
 import model.InformacionArco;
 import model.InformacionVertice;
 import model.data_structures.Vertex;
@@ -136,8 +137,17 @@ public class Controller
 
 				// Requerimiento 2A
 			case 7:
-				view.printMessage("Ingrese el numero de vertices que se requieren: ");
+				view.printMessage("Ingrese el numero de vertices en el cual se quiere instalar la red de camaras de acuerdo a los comparendos de mayor gravedad: ");
 				int verticesM = lector.nextInt();
+				view.printMessage("");
+				long startTime = System.currentTimeMillis();
+				view.printMessage("Informacion detallada de la solución: ");
+				mallaVial.informacionRedComunicacionesInstalacioneCamera(verticesM);
+				long endTime = System.currentTimeMillis();
+				long duration = endTime - startTime;
+				view.printMessage("Tiempo que le toma al algoritmo en encontrar la solución: " + duration + " en milisegundos \n");
+				@SuppressWarnings("unused") 
+				Mapa3 actual1 = new Mapa3(mallaVial.redComunicacionesInstalacionCamaras(verticesM) , "Grafo MST");
 				break;
 
 				// Requerimiento 1B
@@ -174,10 +184,6 @@ public class Controller
 
 				// Requerimiento 2B
 			case 9:
-//				Mapa actual1 = new Mapa(mallaVial.redComunicacionesInstalacionCameras(200) , "Grafo MST");
-				System.out.println(mallaVial.cc());
-//				mallaVial.redComunicacionesInstalacionCameras(4);
-				
 				break;
 
 				// Requerimiento 1C

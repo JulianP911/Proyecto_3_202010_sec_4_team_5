@@ -47,6 +47,11 @@ public class UnGraph<K extends Comparable<K>,V,E>
 	 * Los arcos del grafo
 	 */
 	private SeparteChainingHashST<Integer, Edge<K, E>> arcos;
+	
+	/**
+	 * Los arcos del grafo en un array list
+	 */
+	private ArrayList<Edge<K, E>> arcos1;
 
 	/**
 	 * Bolsa de enteros con las adjacencias de los vertices del grafo no dirigido
@@ -80,6 +85,7 @@ public class UnGraph<K extends Comparable<K>,V,E>
 		vertices = new SeparteChainingHashST<K, Vertex<K,V,E>>();
 		arcos = new SeparteChainingHashST<Integer, Edge<K, E>>();
 		vertices1 = new ArrayList<Vertex<K,V,E>>();
+		arcos1 = new ArrayList<Edge<K, E>>();
 		numeroVertices = 0;
 		numeroVertices = 0;
 		idReferenciaNum = 0;
@@ -188,6 +194,7 @@ public class UnGraph<K extends Comparable<K>,V,E>
 				startVertice.anadirArcoSaliente(arco);
 				endVertice.anadirArcoEntrante(arco);
 				arcos.put(numeroAristas, arco);
+				arcos1.add(arco);
 				numeroAristas++;
 			}							
 		}
@@ -212,13 +219,23 @@ public class UnGraph<K extends Comparable<K>,V,E>
 	}
 	
 	/**
-	 * Proporciona un tabla de hash con los vertices del grafo
-	 * @return Separate Chaining con la información
+	 * Proporciona un arreglo con los vertices del grafo
+	 * @return Arreglo con vertices
 	 */
 	public ArrayList<Vertex<K,V,E>> getVerticesGrafoArreglo()
 	{
 		return vertices1;
 	}
+	
+	/**
+	 * Proporciona un arreglo con los arcos del grafo
+	 * @return Arreglo con Arcos
+	 */
+	public ArrayList<Edge<K,E>> getArcosGrafoArreglo()
+	{
+		return arcos1;
+	}
+
 
 	/**
 	 * Obtener informacion de un vertice si existe de lo contrario null
