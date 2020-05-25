@@ -29,6 +29,7 @@ import model.data_structures.DijkstraSP;
 import model.data_structures.Edge;
 import model.data_structures.LinkedQueue;
 import model.data_structures.PrimMST;
+import model.data_structures.PrimMST2;
 import model.data_structures.SeparteChainingHashST;
 import model.data_structures.UnGraph;
 import model.data_structures.Vertex;
@@ -1262,6 +1263,94 @@ public class MallaVialBogota
 		{
 			Collections.swap(list, i, random.nextInt(i));
 		} 
+	}
+	
+	/**
+	 * Grafo teniendo en cuenta el mayor numero de comparendos con tener en cuenta la malla vial
+	 * @param pSitios Sitios en donde se presentan mas comparendos
+	 * @return Grafo con el mayor numero de comparendos
+	 */
+	public UnGraph<String,InformacionVertice,InformacionArco> redComunicacionesInstalacionCamarasMayorComparendos(int pSitios)
+	{	
+		PrimMST2<String> prim = new PrimMST2<String>(UnDiGraph1);
+		UnGraph<String,InformacionVertice,InformacionArco> total = prim.arbolVerticesMST(UnDiGraph1, pSitios);
+		return total;
+	}
+	
+	/**
+	 * Grafo teniendo en cuenta el mayor numero de comparendos sin tener en cuenta la malla vial
+	 * @param pSitios Sitios en donde se presentan mas comparendos
+	 * @return Grafo con el mayor numero de comparendos
+	 */
+	public UnGraph<String,InformacionVertice,InformacionArco> redComunicacionesInstalacionCamarasMayorComparendosSinMallaVial(int pSitios)
+	{	
+		PrimMST2<String> prim = new PrimMST2<String>(UnDiGraph1);
+		UnGraph<String,InformacionVertice,InformacionArco> total = prim.arbolVerticesMST(UnDiGraph1, pSitios);
+		UnGraph<String,InformacionVertice,InformacionArco> grafoMayorComparendos =  new UnGraph<String,InformacionVertice,InformacionArco>();
+		for(int i = 0; i < total.getArcosGrafoArreglo().size(); i++)
+		{
+			Edge<String,InformacionArco> e = total.getArcosGrafoArreglo().get(i);
+			if(e.getCostArc().getCosto() > 0)
+			{
+				grafoMayorComparendos.addVertex(e.getIdVerticeInicio(), new InformacionVertice(total.getVerticesGrafoArreglo().get(e.getIdInicio()).getValorVertice().getLongitud(), total.getVerticesGrafoArreglo().get(e.getIdInicio()).getValorVertice().getLatitud()));
+				grafoMayorComparendos.addVertex(e.getIdVerticeFinal(), new InformacionVertice(total.getVerticesGrafoArreglo().get(e.getIdDestino()).getValorVertice().getLongitud(), total.getVerticesGrafoArreglo().get(e.getIdDestino()).getValorVertice().getLatitud()));
+				grafoMayorComparendos.addEdge(e.getIdVerticeInicio(), e.getIdVerticeFinal(), new InformacionArco(e.getCostArc().getCosto()));		   
+			}
+		}
+		
+		return grafoMayorComparendos;
+	}
+	
+	/**
+	 * Informacion de la red de comunicaciones de la instalacion de camaras en donde hay mas comparendos
+	 * @param pVertices lugares en donde se instalaran las camaras de seguridad
+	 */
+	public void informacionRedComunicacionesInstalacioneCameraMayorComparendos(int pVertices)
+	{
+		UnGraph<String,InformacionVertice,InformacionArco> grafo =redComunicacionesInstalacionCamarasMayorComparendos(pVertices);
+		UnGraph<String,InformacionVertice,InformacionArco> grafoDist =redComunicacionesInstalacionCamaras(pVertices);
+
+		
+		String cadenaVertices1 = "";
+		String cadenaVertices2 = "";
+		
+		System.out.println("Identificadores de los vertices que hacen parte de la red de camaras: ");
+		for(int i = 0; i < grafo.getVerticesGrafoArreglo().size(); i++)
+		{
+			Vertex<String,InformacionVertice,InformacionArco> verticeActual = grafo.getVerticesGrafoArreglo().get(i);
+			cadenaVertices1 += verticeActual.getIdVertice() + ", ";
+		}
+		
+		ordenVertices(grafo.getVerticesGrafoArreglo());
+		for(int i = 0; i < grafo.getVerticesGrafoArreglo().size(); i++)
+		{
+			Vertex<String,InformacionVertice,InformacionArco> verticeActual = grafo.getVerticesGrafoArreglo().get(i);
+			cadenaVertices2 += verticeActual.getIdVertice() + ", ";
+		}
+		System.out.println("El total de vertices que comprende la red es de: " + grafo.getVerticesGrafoArreglo().size());
+		System.out.println("- Vertices desorganizados: ");
+		System.out.println(cadenaVertices2);
+		System.out.println("- Vertices organizados: ");
+		System.out.println(cadenaVertices1);
+		System.out.println(" ");
+		
+		String cadenaArcos = "";
+		double costoAcomulado = 0;
+		
+		System.out.println("Arcos que comprenden la red de comunicaciones de la instalacion de camaras de video: ");
+		for(int i = 0; i < grafo.getArcosGrafoArreglo().size(); i++)
+		{
+			Edge<String,InformacionArco> arcoActual = grafo.getArcosGrafoArreglo().get(i);
+			Edge<String,InformacionArco> arcoActualDist = grafoDist.getArcosGrafoArreglo().get(i);
+			cadenaArcos += arcoActual.getIdVerticeInicio() + "-" + arcoActual.getIdVerticeFinal() + ", ";
+			costoAcomulado += arcoActualDist.getCostArc().getCosto();
+		}
+		
+		System.out.println(cadenaArcos);
+		System.out.println(" ");
+		
+		double precioKilometro = costoAcomulado * 10000;
+		System.out.println("Costo monetario total de la instalacion de la red es de: " + precioKilometro + " dolares.");	
 	}
 	
 	/**

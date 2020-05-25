@@ -86,11 +86,18 @@ public class PrimMST2<K extends Comparable<K>>
 			{
 				int w = e.other(v);
 				if (marked[w]) continue;         // v-w is obsolete edge
-				if (e.getCostArc().getCosto() < distTo[w]) {
+				if (e.getCostArc().getCosto() < distTo[w]) 
+				{
 					distTo[w] = e.getCostArc().getCosto();
 					edgeTo[w] = e;
-					if (pq.contains(w)) pq.decreaseKey(w, distTo[w]);
-					else                pq.insert(w, distTo[w]);
+					if (pq.contains(w)) 
+					{
+						pq.decreaseKey(w, distTo[w]);
+					}
+					else              
+					{
+						pq.insert(w, distTo[w]);
+					}
 				}
 			}
 		}

@@ -174,6 +174,7 @@ public class Mapa3 extends MapView
 			Polygon w=new Polygon(map);
 			PolygonOptions p1 = new PolygonOptions();
 			p1.setFillColor("#FF000");
+			p1.setStrokeColor("#FF000");
 			w.setOptions(p1);
 			w.setPath(arcs);
 			w.setVisible(true);

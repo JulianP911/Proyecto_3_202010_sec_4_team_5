@@ -184,6 +184,18 @@ public class Controller
 
 				// Requerimiento 2B
 			case 9:
+				view.printMessage("Ingrese el numero de vertices en el cual se quiere instalar la red de camaras en donde se presentan el mayor numero de comparendos: ");
+				int verticesComM = lector.nextInt();
+				view.printMessage("");
+				long startTime1 = System.currentTimeMillis();
+				view.printMessage("Informacion detallada de la solución: ");
+				mallaVial.informacionRedComunicacionesInstalacioneCameraMayorComparendos(verticesComM);
+				mallaVial.redComunicacionesInstalacionCamarasMayorComparendosSinMallaVial(verticesComM);
+				long endTime1 = System.currentTimeMillis();
+				long duration1 = endTime1 - startTime1;
+				view.printMessage("Tiempo que le toma al algoritmo en encontrar la solución: " + duration1 + " en milisegundos \n");
+				@SuppressWarnings("unused") 
+				Mapa3 actual2 = new Mapa3(mallaVial.redComunicacionesInstalacionCamarasMayorComparendos(verticesComM) , "Grafo MST");
 				break;
 
 				// Requerimiento 1C
