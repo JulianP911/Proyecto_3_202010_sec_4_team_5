@@ -30,7 +30,8 @@ public class View
 	    System.out.println("9. Requerimineto 2B - Determinar la red de comunicaciones que soporte la instalación de cámaras de video en los M puntos donde se presenta el mayor número de comparendos en la ciudad");
 	    System.out.println("10. Requerimineto 1C - Obtener los caminos más cortos para que los policías puedan atender los M comparendos más graves");
 	    System.out.println("11. Requerimiento 2C - Identificar las zonas de impacto de las estaciones de policía.");
-	    System.out.println("12. Cerrar programa");
+	    System.out.println("12. Requerimiento 2C 'Extra' - Identificar las zonas de impacto de las estaciones de policía.");
+	    System.out.println("13. Cerrar programa");
     	}
 
 	/**

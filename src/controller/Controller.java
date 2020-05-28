@@ -1,11 +1,17 @@
 package controller;
 
+import java.awt.Color;
+import java.util.Iterator;
+import java.util.Random;
 import java.util.Scanner;
 
 import Mapa.Mapa;
 import Mapa.Mapa3;
+import Mapa.Mapa4;
+import model.EstacionPolicia;
 import model.InformacionArco;
 import model.InformacionVertice;
+import model.data_structures.UnGraph;
 import model.data_structures.Vertex;
 import model.logic.MallaVialBogota;
 import model.logic.Modelo;
@@ -200,13 +206,139 @@ public class Controller
 
 				// Requerimiento 1C
 			case 10:
+				view.printMessage("Ingrese el numero de comparendos a atender: ");
+				int comparendosAtender = lector.nextInt();
+				mallaVial.grafoMenorDistanciaPolicia(comparendosAtender);
 				break;
 
 				// Requerimiento 2C
 			case 11:
+				long startTime2 = System.currentTimeMillis();
+				view.printMessage("");
+				UnGraph<String,InformacionVertice,InformacionArco> grafo = mallaVial.darSubGrafosComparendosPolicia(1000);
+				view.printMessage("El numero de vertices totales que tiene el grafo no dirigido: " + grafo.V());
+				view.printMessage("El numero de arcos totales que tiene el grafo no dirigido: " + grafo.E());
+				
+				view.printMessage("");
+				view.printMessage("Informacion de las estaciones de policia");
+				view.printMessage("Importante cada arco equivale 50 comparendos");
+				
+				Iterator<EstacionPolicia> it = modelo.cargarDatosEstacionesPolicia2().iterator();
+				while(it.hasNext())
+				{
+					EstacionPolicia actual = it.next();
+					int contCom = 0;
+					for(int i = 0; i < grafo.V(); i++)
+					{
+						Vertex<String,InformacionVertice,InformacionArco> actualVertice = grafo.getVerticesGrafoArreglo().get(i);
+						double distanciaHaversiana = mallaVial.getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), actual.getLatitud(), actual.getLongitud());
+
+						if(distanciaHaversiana < 4.5)
+						{
+							contCom++;
+						}
+					}
+					System.out.println(actual.getEpoNombre() + ", Numero de comparendos: " + (contCom*50));
+				}
+				
+				view.printMessage("");
+				Iterator<EstacionPolicia> it2 = modelo.cargarDatosEstacionesPolicia2().iterator();
+				while(it2.hasNext())
+				{
+					EstacionPolicia actual = it2.next();
+					int contCom = 0;
+					for(int i = 0; i < grafo.V(); i++)
+					{
+						Vertex<String,InformacionVertice,InformacionArco> actualVertice = grafo.getVerticesGrafoArreglo().get(i);
+						double distanciaHaversiana = mallaVial.getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), actual.getLatitud(), actual.getLongitud());
+
+						if(distanciaHaversiana < 4.5)
+						{
+							contCom++;
+						}
+					}
+					
+					Random rand = new Random();
+
+					float hue = rand.nextFloat(); 
+				    float saturation = (rand.nextInt(2000) + 1000) / 10000f; 
+				    float luminance = 0.9f; 
+				    Color color = Color.getHSBColor(hue, saturation, luminance);
+
+					System.out.println("Color: " + color.toString()  + ", Object ID de la estación: " + actual.getObjectId() + " Numero de vertices incluidos: " + (contCom+1));
+				}
+				
+				long endTime2 = System.currentTimeMillis();
+				long duration2 = endTime2 - startTime2;
+				view.printMessage("Tiempo que le toma al algoritmo en encontrar la solución: " + duration2 + " en milisegundos \n");
+				@SuppressWarnings("unused") 
+				Mapa4 mapaGrafitos = new Mapa4(grafo, "Grafo Componentes Conectados");
 				break;
 
 			case 12:
+				long startTime3 = System.currentTimeMillis();
+				view.printMessage("");
+				UnGraph<String,InformacionVertice,InformacionArco> grafo1 = mallaVial.darSubGrafosComparendosPolicia(3000);
+				view.printMessage("El numero de vertices totales que tiene el grafo no dirigido: " + grafo1.V());
+				view.printMessage("El numero de arcos totales que tiene el grafo no dirigido: " + grafo1.E());
+				
+				view.printMessage("");
+				view.printMessage("Informacion de las estaciones de policia");
+				view.printMessage("Importante cada arco equivale 50 comparendos");
+				
+				Iterator<EstacionPolicia> it3 = modelo.cargarDatosEstacionesPolicia2().iterator();
+				while(it3.hasNext())
+				{
+					EstacionPolicia actual = it3.next();
+					int contCom = 0;
+					for(int i = 0; i < grafo1.V(); i++)
+					{
+						Vertex<String,InformacionVertice,InformacionArco> actualVertice = grafo1.getVerticesGrafoArreglo().get(i);
+						double distanciaHaversiana = mallaVial.getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), actual.getLatitud(), actual.getLongitud());
+
+						if(distanciaHaversiana < 4.5)
+						{
+							contCom++;
+						}
+					}
+					System.out.println(actual.getEpoNombre() + ", Numero de comparendos: " + (contCom*50));
+				}
+				
+				view.printMessage("");
+				Iterator<EstacionPolicia> it4 = modelo.cargarDatosEstacionesPolicia2().iterator();
+				while(it4.hasNext())
+				{
+					EstacionPolicia actual = it4.next();
+					int contCom = 0;
+					for(int i = 0; i < grafo1.V(); i++)
+					{
+						Vertex<String,InformacionVertice,InformacionArco> actualVertice = grafo1.getVerticesGrafoArreglo().get(i);
+						double distanciaHaversiana = mallaVial.getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), actual.getLatitud(), actual.getLongitud());
+
+						if(distanciaHaversiana < 4.5)
+						{
+							contCom++;
+						}
+					}
+					
+					Random rand = new Random();
+
+					float hue = rand.nextFloat(); 
+				    float saturation = (rand.nextInt(2000) + 1000) / 10000f; 
+				    float luminance = 0.9f; 
+				    Color color = Color.getHSBColor(hue, saturation, luminance);
+
+					System.out.println("Color: " + color.toString()  + ", Object ID de la estación: " + actual.getObjectId() + " Numero de vertices incluidos: " + (contCom+1));
+				}
+				
+				long endTime3 = System.currentTimeMillis();
+				long duration3 = endTime3 - startTime3;
+				view.printMessage("Tiempo que le toma al algoritmo en encontrar la solución: " + duration3 + " en milisegundos \n");
+				@SuppressWarnings("unused") 
+				Mapa4 mapaGrafitoGrande = new Mapa4(grafo1, "Grafo Componentes Conectados");
+				break;
+				
+			case 13:
 				lector.close();
 				fin = true;
 				break;

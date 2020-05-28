@@ -3,6 +3,7 @@ package model.data_structures;
 import java.util.ArrayList;
 
 import model.Comparendo;
+import model.EstacionPolicia;
 
 /**
  * Clase de vetice de tipo generica K
@@ -48,6 +49,11 @@ public class Vertex<K extends Comparable<K>,V,E>
      * Comparendos asociados al vertice
      */
     private LinkedQueue<Comparendo> cola;
+    
+    /**
+     * Estacion de policia asociados al vertice
+     */
+    private LinkedQueue<EstacionPolicia> estaciones;
 
     // Metodo constructor
     
@@ -60,6 +66,7 @@ public class Vertex<K extends Comparable<K>,V,E>
 		componenteConectado = -1;
 		idNumumeroVertice = pIdNumero;
 		cola = new LinkedQueue<Comparendo>();
+		estaciones = new LinkedQueue<EstacionPolicia>();
 	}
 	
 	/**
@@ -176,6 +183,15 @@ public class Vertex<K extends Comparable<K>,V,E>
 	public void adicionarComparendo(Comparendo pComparendo)
 	{
 		cola.enqueue(pComparendo);
+	}
+	
+	/**
+	 * Adiccionar comparendo al vertice en la cola
+	 * @param pEstacion de policia
+	 */
+	public void adicionarEstacion(EstacionPolicia pEstacion)
+	{
+		estaciones.enqueue(pEstacion);
 	}
 	
 	/**

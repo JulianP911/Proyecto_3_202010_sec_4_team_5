@@ -102,6 +102,7 @@ public class MallaVialBogota
 		estacionesVertice = new SeparteChainingHashST<String, EstacionPolicia>();
 		comparendosArcos = new SeparteChainingHashST<String, Integer>();
 		modelo = new Modelo();
+		asociarEstacionesVerticePruebaC();
 		//		adicionarComparendosAVertices();
 	}
 
@@ -231,7 +232,7 @@ public class MallaVialBogota
 		{
 			e.printStackTrace();
 		}
-		
+
 		try
 		{
 			BufferedReader bf = new BufferedReader(new FileReader("./data/bogota_vertices.txt"));
@@ -282,8 +283,8 @@ public class MallaVialBogota
 					arcosCom++;
 				}
 			}
-//			System.out.println("Numero de vertices: " + UnDiGraph1.V());
-//			System.out.println("Numero de arcos: " + UnDiGraph1.E());
+			//			System.out.println("Numero de vertices: " + UnDiGraph1.V());
+			//			System.out.println("Numero de arcos: " + UnDiGraph1.E());
 		}
 		catch (Exception e)
 		{
@@ -367,12 +368,12 @@ public class MallaVialBogota
 
 		FileWriter fichero = null;
 		PrintWriter pw = null;
-		
+
 		try
 		{
 			fichero = new FileWriter("./data/ComparendosArcos.txt");
 			pw = new PrintWriter(fichero);
-			
+
 			Iterator<Edge<String,InformacionArco>> it = UnDiGraph.getArcosGrafo().Vals().iterator();
 			int i = 0;
 			while(it.hasNext())
@@ -389,7 +390,7 @@ public class MallaVialBogota
 					{
 						cont += Integer.parseInt(compa[1]);
 					}
-					
+
 					if(compa[0].equals(finalv))
 					{
 						cont += Integer.parseInt(compa[1]);
@@ -782,21 +783,20 @@ public class MallaVialBogota
 	 */
 	public SeparteChainingHashST<String, EstacionPolicia> asociarEstacionesVertice1()
 	{
-		UnGraph<String, InformacionVertice, InformacionArco> grafo = cargarGrafo();
 		LinkedQueue<EstacionPolicia> estaciones = modelo.cargarDatosEstacionesPolicia2();
 		SeparteChainingHashST<String, EstacionPolicia> nueva = estacionesVertice;
 
-		for(int i = 0; i < grafo.V() ; i++)
+		for(int i = 0; i < UnDiGraph.V() ; i++)
 		{
 			String key = i + "";
-			Vertex<String,InformacionVertice,InformacionArco> actualVertice = grafo.getInfoVertexV(key);
+			Vertex<String,InformacionVertice,InformacionArco> actualVertice = UnDiGraph.getVerticesGrafoArreglo().get(i);
 
 			Iterator<EstacionPolicia> it = estaciones.iterator();
 			while(it.hasNext())
 			{
 				EstacionPolicia actualEstacion = it.next();
 				double distancia1 = getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), actualEstacion.getLatitud(), actualEstacion.getLongitud());				
-				if(distancia1 < 0.05 )
+				if(distancia1 < 0.04 )
 				{	
 					if(nueva.contains(key) == false)
 					{
@@ -924,7 +924,7 @@ public class MallaVialBogota
 	 */
 	public Vertex<String,InformacionVertice,InformacionArco> aproximarCordenadasVerticesGrafoVer(String pCoordenada)
 	{
-		inicializarGrafo();
+//		inicializarGrafo();
 		Vertex<String,InformacionVertice,InformacionArco> vertice = null;
 
 		String[] coordenadas = pCoordenada.split(",");
@@ -1097,7 +1097,7 @@ public class MallaVialBogota
 		String coordenadas = latMin + "," + latMax + ",-" + longMin + ",-" + longMax;
 		return coordenadas;
 	}
-	
+
 	/**
 	 * Obtener el camino de costo minimo entre dos ubicaciones geograficas por cantidad de comparendos
 	 * @param pOrigen Punto de origen ingresado por el usuario
@@ -1118,7 +1118,7 @@ public class MallaVialBogota
 
 		DijkstraSP<String> dijkstra = new DijkstraSP<String>(UnDiGraph1, numVerticeInicio);
 		DijkstraSP<String> dijkstra1 = new DijkstraSP<String>(UnDiGraph, numVerticeInicio);
-		
+
 		Iterable<Edge<String, InformacionArco>> recorrerRuta = dijkstra.pathTo(UnDiGraph1.getInfoVertexInfo(numVerticeFinal), UnDiGraph1);
 		Iterable<Edge<String, InformacionArco>> recorrerRuta1 = dijkstra1.pathTo(UnDiGraph.getInfoVertexInfo(numVerticeFinal), UnDiGraph);
 
@@ -1170,7 +1170,7 @@ public class MallaVialBogota
 		System.out.println("La menor contidad de comparendos en la ruta es de: " + cantidadComparendos);
 		System.out.println("La distancia estimana es de: " + promedioDistancia);
 	}
-	
+
 	/**
 	 * Grafo con las conexiones utilizando el algoritmo de prim
 	 * @return Grafo con todas las conexiones en las cuales se deberian instalar camaras de seguridad
@@ -1181,7 +1181,7 @@ public class MallaVialBogota
 		UnGraph<String,InformacionVertice,InformacionArco> grafo = prim.arbolMST(UnDiGraph);
 		return grafo;
 	}
-	
+
 	/**
 	 * Grafo teniendo en cuenta el numero de comparendos de mayor grado
 	 * @param pSitios Sitios en donde se presentan estos comparendos
@@ -1193,7 +1193,7 @@ public class MallaVialBogota
 		UnGraph<String,InformacionVertice,InformacionArco> grafo = prim.arbolVerticesMST(UnDiGraph, pSitios);
 		return grafo;
 	}
-	
+
 	/**
 	 * Informacion de la red de comunicaciones de la instalacion de camaras
 	 * @param pComparendos Comparendos de mayor gravedad asignados a los vertices 
@@ -1202,40 +1202,40 @@ public class MallaVialBogota
 	{
 		UnGraph<String,InformacionVertice,InformacionArco> grafo =redComunicacionesInstalacionCamaras(pComparendos);
 		ArrayList<Comparendo> comparendosMayorGravedad = new ArrayList<Comparendo>();
-		
+
 		Comparendo[] comparendos = modelo.organizarComparendosMayorGravedad();
 		for(int i = 0; i < comparendos.length; i++)
 		{
 			Comparendo actual = comparendos[i];
 			comparendosMayorGravedad.add(actual);
 		}
-		
+
 		String cadenaVertices1 = "";
 		String cadenaVertices2 = "";
-		
+
 		System.out.println("Identificadores de los vertices que hacen parte de la red de camaras: ");
 		for(int i = 0; i < grafo.getVerticesGrafoArreglo().size(); i++)
 		{
 			Vertex<String,InformacionVertice,InformacionArco> verticeActual = grafo.getVerticesGrafoArreglo().get(i);
 			cadenaVertices1 += verticeActual.getIdVertice() + ", ";
 		}
-		
+
 		ordenVertices(grafo.getVerticesGrafoArreglo());
 		for(int i = 0; i < grafo.getVerticesGrafoArreglo().size(); i++)
 		{
 			Vertex<String,InformacionVertice,InformacionArco> verticeActual = grafo.getVerticesGrafoArreglo().get(i);
 			cadenaVertices2 += verticeActual.getIdVertice() + ", ";
 		}
-		
+
 		System.out.println("- Vertices desorganizados: ");
 		System.out.println(cadenaVertices2);
 		System.out.println("- Vertices organizados: ");
 		System.out.println(cadenaVertices1);
 		System.out.println(" ");
-		
+
 		String cadenaArcos = "";
 		double costoAcomulado = 0;
-		
+
 		System.out.println("Arcos que comprenden la red de comunicaciones de la instalacion de camaras de video: ");
 		for(int i = 0; i < grafo.getArcosGrafoArreglo().size(); i++)
 		{
@@ -1243,14 +1243,14 @@ public class MallaVialBogota
 			cadenaArcos += arcoActual.getIdVerticeInicio() + "-" + arcoActual.getIdVerticeFinal() + ", ";
 			costoAcomulado += arcoActual.getCostArc().getCosto();
 		}
-		
+
 		System.out.println(cadenaArcos);
 		System.out.println(" ");
-		
+
 		double precioKilometro = costoAcomulado * 10000;
 		System.out.println("Costo monetario total de la instalacion de la red es de: " + precioKilometro + " dolares.");	
 	}
-	
+
 	/**
 	 * Teniendo los vertices los desordena de la lista
 	 * @param list Lista de v
@@ -1264,7 +1264,7 @@ public class MallaVialBogota
 			Collections.swap(list, i, random.nextInt(i));
 		} 
 	}
-	
+
 	/**
 	 * Grafo teniendo en cuenta el mayor numero de comparendos con tener en cuenta la malla vial
 	 * @param pSitios Sitios en donde se presentan mas comparendos
@@ -1276,7 +1276,7 @@ public class MallaVialBogota
 		UnGraph<String,InformacionVertice,InformacionArco> total = prim.arbolVerticesMST(UnDiGraph1, pSitios);
 		return total;
 	}
-	
+
 	/**
 	 * Grafo teniendo en cuenta el mayor numero de comparendos sin tener en cuenta la malla vial
 	 * @param pSitios Sitios en donde se presentan mas comparendos
@@ -1297,10 +1297,10 @@ public class MallaVialBogota
 				grafoMayorComparendos.addEdge(e.getIdVerticeInicio(), e.getIdVerticeFinal(), new InformacionArco(e.getCostArc().getCosto()));		   
 			}
 		}
-		
+
 		return grafoMayorComparendos;
 	}
-	
+
 	/**
 	 * Informacion de la red de comunicaciones de la instalacion de camaras en donde hay mas comparendos
 	 * @param pVertices lugares en donde se instalaran las camaras de seguridad
@@ -1310,17 +1310,17 @@ public class MallaVialBogota
 		UnGraph<String,InformacionVertice,InformacionArco> grafo =redComunicacionesInstalacionCamarasMayorComparendos(pVertices);
 		UnGraph<String,InformacionVertice,InformacionArco> grafoDist =redComunicacionesInstalacionCamaras(pVertices);
 
-		
+
 		String cadenaVertices1 = "";
 		String cadenaVertices2 = "";
-		
+
 		System.out.println("Identificadores de los vertices que hacen parte de la red de camaras: ");
 		for(int i = 0; i < grafo.getVerticesGrafoArreglo().size(); i++)
 		{
 			Vertex<String,InformacionVertice,InformacionArco> verticeActual = grafo.getVerticesGrafoArreglo().get(i);
 			cadenaVertices1 += verticeActual.getIdVertice() + ", ";
 		}
-		
+
 		ordenVertices(grafo.getVerticesGrafoArreglo());
 		for(int i = 0; i < grafo.getVerticesGrafoArreglo().size(); i++)
 		{
@@ -1333,10 +1333,10 @@ public class MallaVialBogota
 		System.out.println("- Vertices organizados: ");
 		System.out.println(cadenaVertices1);
 		System.out.println(" ");
-		
+
 		String cadenaArcos = "";
 		double costoAcomulado = 0;
-		
+
 		System.out.println("Arcos que comprenden la red de comunicaciones de la instalacion de camaras de video: ");
 		for(int i = 0; i < grafo.getArcosGrafoArreglo().size(); i++)
 		{
@@ -1345,14 +1345,14 @@ public class MallaVialBogota
 			cadenaArcos += arcoActual.getIdVerticeInicio() + "-" + arcoActual.getIdVerticeFinal() + ", ";
 			costoAcomulado += arcoActualDist.getCostArc().getCosto();
 		}
-		
+
 		System.out.println(cadenaArcos);
 		System.out.println(" ");
-		
+
 		double precioKilometro = costoAcomulado * 10000;
 		System.out.println("Costo monetario total de la instalacion de la red es de: " + precioKilometro + " dolares.");	
 	}
-	
+
 	/**
 	 * Numero de componentes conectados en el grafo
 	 * @return Numero de componentes conectados
@@ -1361,5 +1361,335 @@ public class MallaVialBogota
 	{
 		ComponentConnected cc = new ComponentConnected(UnDiGraph);
 		return cc.count();
+	}
+
+	/**
+	 * Aproximar comparendo al vertice mas cercano a la estacion de la policia
+	 * @param pCoordenada Coordenada del comparendo
+	 * @return Vertice mas cercano a la estacion de policia
+	 */
+	public Vertex<String,InformacionVertice,InformacionArco> aproximarComparendoEstacionPolicia(String pCoordenada)
+	{
+		Vertex<String,InformacionVertice,InformacionArco> vertice = null;
+
+		String[] coordenadas = pCoordenada.split(",");
+		double latitud = Double.parseDouble(coordenadas[0]);
+		double longitud = Double.parseDouble(coordenadas[1]);
+
+		SeparteChainingHashST<String,EstacionPolicia> verticesComparendoGrafo = estacionesVertice;
+		double temporalDistancia = Double.MAX_VALUE;
+
+		Iterator<String> it2 =  verticesComparendoGrafo.keys().iterator();
+		while(it2.hasNext())
+		{
+			String actual = it2.next();
+			int actualV = Integer.parseInt(actual);
+
+			Vertex<String,InformacionVertice,InformacionArco> actualVertice = UnDiGraph.getVerticesGrafoArreglo().get(actualV);
+			double distanciaHaversiana = getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), latitud, longitud);
+
+			if(distanciaHaversiana <= temporalDistancia)
+			{
+				temporalDistancia = distanciaHaversiana;
+				vertice = actualVertice;
+			}
+		}
+
+		return vertice;
+	}
+
+	/**
+	 * Obtener la informacion de los comparendos a procesarse por la policia
+	 * @param pNumeroComparendos el numero de comparendos a procesar
+	 */
+	public void grafoMenorDistanciaPolicia(int pNumeroComparendos)
+	{
+		int contadorComparendos = 0;
+		LinkedQueue<Comparendo> comparendos = modelo.cargarDatos3();
+		ComponentConnected cc = new ComponentConnected(UnDiGraph);
+
+		Iterator<Comparendo> it1 = comparendos.iterator();
+		while(it1.hasNext() && contadorComparendos < pNumeroComparendos)
+		{
+			Comparendo actual = it1.next();
+			String pCoordenada = actual.getLatitud() + "," + actual.getLongitud();
+			Vertex<String,InformacionVertice,InformacionArco> verticeI = aproximarComparendoEstacionPolicia(pCoordenada);
+			Vertex<String,InformacionVertice,InformacionArco> verticeF = aproximarCordenadasVerticesGrafoArreglo(pCoordenada);
+			String numVerticeInicio = verticeI.getIdVertice();
+			String numVerticeFinal = verticeF.getIdVertice();
+
+			int numeroVertices = 0;
+			int numeroArcos = 0;
+			double promedioDistancia = 0;
+			ArrayList<Vertex<String,InformacionVertice,InformacionArco>> verticesRecorridos = new ArrayList<Vertex<String,InformacionVertice,InformacionArco>>();
+			ArrayList<Edge<String,InformacionArco>> arcosRecorridos = new ArrayList<Edge<String,InformacionArco>>();
+
+			if(cc.connected(verticeI.getIdNumeroVertice(), verticeF.getIdNumeroVertice()) == true)
+			{
+				DijkstraSP<String> dijkstra = new DijkstraSP<String>(UnDiGraph, numVerticeInicio);
+
+				Iterable<Edge<String, InformacionArco>> recorrerRuta = dijkstra.pathTo(UnDiGraph.getInfoVertexInfo(numVerticeFinal), UnDiGraph);
+				if(recorrerRuta != null)
+				{
+					Iterator<Edge<String, InformacionArco>> it = recorrerRuta.iterator();
+					while(it.hasNext())
+					{
+						Edge<String, InformacionArco> actualArco = it.next();
+						arcosRecorridos.add(actualArco);
+						Vertex<String,InformacionVertice, InformacionArco> vertice1 = UnDiGraph.getInfoVertexV(actualArco.getIdVerticeInicio());
+						Vertex<String,InformacionVertice, InformacionArco> vertice2 = UnDiGraph.getInfoVertexV(actualArco.getIdVerticeFinal());
+						double costo = actualArco.getCostArc().getCosto();
+
+						if(!verticesRecorridos.contains(vertice1))
+						{
+							verticesRecorridos.add(vertice1);
+							numeroVertices++;
+						}
+						if(!verticesRecorridos.contains(vertice2))
+						{
+							verticesRecorridos.add(vertice2);
+							numeroVertices++;
+						}
+
+						numeroArcos++;
+						promedioDistancia += costo;
+					}
+				}
+
+				promedioDistancia = promedioDistancia / numeroArcos;
+
+				System.out.println("El compaarendo procesado es el: " + actual.getObjective());
+				System.out.println("El numero de vertices entre los dos puntos ingresados es: " + numeroVertices);
+				System.out.println("Los vertices recorridos entre los puntos son:");
+				for(int i = 0; i < verticesRecorridos.size(); i++)
+				{
+					Vertex<String,InformacionVertice,InformacionArco> actualV = verticesRecorridos.get(i);
+					System.out.println(actualV.getIdVertice() + ", ");
+				}
+
+				System.out.println("Los arcos que comprenden la ruta:");
+				for(int i = 0; i < arcosRecorridos.size(); i++)
+				{
+					Edge<String,InformacionArco> actualA = arcosRecorridos.get(i);
+					System.out.println(actualA.getIdVerticeInicio() + "-" + actualA.getIdVerticeFinal() + ", ");
+				}
+				System.out.println("La distancia estimana es de: " + promedioDistancia);
+			}
+			else
+			{
+				System.out.println("Comparendo con el objectID: " + actual.getObjective() + " no se encuntra en la misma componente para atender el comparendo.");
+			}
+
+			contadorComparendos++;
+		}
+	}
+
+	/**
+	 * Dar subgrafos pequeños con la informacion de los componentes
+	 * @param pNumeroComparendos Numeros de comparendos procesar
+	 * @return Grafo con las diferentes configuraciones
+	 */
+	public UnGraph<String,InformacionVertice,InformacionArco> darSubGrafosComparendosPolicia(int pNumeroComparendos)
+	{
+		int contadorComparendos = 0;
+		LinkedQueue<Comparendo> comparendos = modelo.cargarDatos3();
+		UnGraph<String,InformacionVertice,InformacionArco> grafito = new UnGraph<String,InformacionVertice,InformacionArco>();
+
+		Iterator<Comparendo> it1 = comparendos.iterator();
+		while(it1.hasNext() && contadorComparendos < pNumeroComparendos)
+		{
+			Comparendo actual = it1.next();
+			String pCoordenada = actual.getLatitud() + "," + actual.getLongitud();
+			Vertex<String,InformacionVertice,InformacionArco> verticeI = aproximarComparendoEstacionPolicia(pCoordenada);
+			Vertex<String,InformacionVertice,InformacionArco> verticeF = aproximarCordenadasVerticesGrafoArreglo(pCoordenada);
+			String numVerticeInicio = verticeI.getIdVertice();
+			String numVerticeFinal = verticeF.getIdVertice();
+			grafito.addVertex(numVerticeInicio, new InformacionVertice(verticeI.getValorVertice().getLongitud(), verticeI.getValorVertice().getLatitud()));
+			grafito.addVertex(numVerticeFinal, new InformacionVertice(verticeF.getValorVertice().getLongitud(), verticeF.getValorVertice().getLatitud()));
+			double distancia1 = getDistanceHaversian(verticeI.getValorVertice().getLatitud(), verticeI.getValorVertice().getLongitud(), verticeF.getValorVertice().getLatitud(), verticeF.getValorVertice().getLongitud());				
+			grafito.addEdge(numVerticeInicio, numVerticeFinal, new InformacionArco(distancia1));
+			contadorComparendos++;
+		}
+
+		return grafito;
+	}
+	
+	public Vertex<String,InformacionVertice,InformacionArco> aproximarCordenadasVerticesGrafoArreglo(String pCoordenada)
+	{
+//		inicializarGrafo();
+		Vertex<String,InformacionVertice,InformacionArco> vertice = null;
+
+		String[] coordenadas = pCoordenada.split(",");
+		double latitud = Double.parseDouble(coordenadas[0]);
+		double longitud = Double.parseDouble(coordenadas[1]);
+
+		double temporalDistancia = Double.MAX_VALUE;
+
+		for(int i = 0; i < UnDiGraph.getVerticesGrafoArreglo().size(); i++)
+		{
+			Vertex<String,InformacionVertice,InformacionArco> actualVertice = UnDiGraph.getVerticesGrafoArreglo().get(i);
+			double distanciaHaversiana = getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), latitud, longitud);
+
+			if(distanciaHaversiana <= temporalDistancia)
+			{
+				temporalDistancia = distanciaHaversiana;
+				vertice = actualVertice;
+			}
+		}
+
+		return vertice;
+	}
+
+	/**
+	 * Asociar las estaciones de policia al vertice mas cercano u
+	 */
+	public void asociarEstacionesVerticePruebaC()
+	{
+		LinkedQueue<EstacionPolicia> estaciones = modelo.cargarDatosEstacionesPolicia2();
+		boolean anadido1 = false;boolean anadido2 = false;boolean anadido3 = false;boolean anadido4 = false;boolean anadido5 = false;boolean anadido6 = false;boolean anadido7 = false;boolean anadido8 = false;boolean anadido9 = false;boolean anadido10 = false;
+		boolean anadido11 = false;boolean anadido12 = false;boolean anadido13 = false;boolean anadido14 = false;boolean anadido15 = false;boolean anadido16 = false;boolean anadido17 = false;boolean anadido18 = false;boolean anadido19 = false;boolean anadido20 = false;
+		boolean anadido21 = false;
+
+		for(int i = 0; i < UnDiGraph.V() ; i++)
+		{
+			String key = i + "";
+			Vertex<String,InformacionVertice,InformacionArco> actualVertice = UnDiGraph.getVerticesGrafoArreglo().get(i);
+
+			Iterator<EstacionPolicia> it = estaciones.iterator();
+			while(it.hasNext())
+			{
+				EstacionPolicia actualEstacion = it.next();
+				double distancia1 = getDistanceHaversian(actualVertice.getValorVertice().getLatitud(), actualVertice.getValorVertice().getLongitud(), actualEstacion.getLatitud(), actualEstacion.getLongitud());				
+				if(distancia1 < 0.09 )
+				{	
+					if(actualEstacion.getEpoNombre().equals("Estación de Policía Antonio Nariño") && !anadido1)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido1 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía Barrios Unidos") && !anadido2)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido2 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía Bosa") && !anadido3)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido3 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía Ciudad Bolívar") && !anadido4)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido4 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía Engativa") && !anadido5)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido5 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía Fontibón") && !anadido6)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido6 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía Kennedy") && !anadido7)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido7 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía Los Martirés") && !anadido8)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido8 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía Puente Aranda") && !anadido9)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido9 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía Suba") && !anadido10)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido10 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía de Teusaquillo") && !anadido11)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido11 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía Tunjuelito") && !anadido12)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido12 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía de Usaquen") && !anadido13)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido13 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía de Usme") && !anadido14)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido14 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía La Candelaría") && !anadido15)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido15 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía de Chapinero") && !anadido16)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido16 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía de San Cristobál") && !anadido17)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido17 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía Rafael Uribe Uribe") && !anadido18)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido18 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía Aeropuerto") && !anadido19)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido19 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía Terminal") && !anadido20)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido20 = true;
+					}
+					else if(actualEstacion.getEpoNombre().equals("Estación de Policía de Santa Fe") && !anadido21)
+					{
+						actualVertice.adicionarEstacion(actualEstacion);
+						estacionesVertice.put(key, actualEstacion);
+						anadido21 = true;
+					}
+				}
+			}
+		}
 	}
 }
