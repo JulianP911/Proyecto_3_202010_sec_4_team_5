@@ -1413,11 +1413,11 @@ public class MallaVialBogota
 		{
 			Comparendo actual = it1.next();
 			String pCoordenada = actual.getLatitud() + "," + actual.getLongitud();
-			Vertex<String,InformacionVertice,InformacionArco> verticeI = aproximarComparendoEstacionPolicia(pCoordenada);
+			Vertex<String,InformacionVertice,InformacionArco> verticeI = aproximarComparendoEstacionPolicia(pCoordenada);			
 			Vertex<String,InformacionVertice,InformacionArco> verticeF = aproximarCordenadasVerticesGrafoArreglo(pCoordenada);
 			String numVerticeInicio = verticeI.getIdVertice();
 			String numVerticeFinal = verticeF.getIdVertice();
-
+			
 			int numeroVertices = 0;
 			int numeroArcos = 0;
 			double promedioDistancia = 0;
@@ -1458,7 +1458,7 @@ public class MallaVialBogota
 
 				promedioDistancia = promedioDistancia / numeroArcos;
 
-				System.out.println("El compaarendo procesado es el: " + actual.getObjective());
+				System.out.println("El comparendo procesado es el: " + actual.getObjective());
 				System.out.println("El numero de vertices entre los dos puntos ingresados es: " + numeroVertices);
 				System.out.println("Los vertices recorridos entre los puntos son:");
 				for(int i = 0; i < verticesRecorridos.size(); i++)
