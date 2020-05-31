@@ -127,7 +127,7 @@ public class DijkstraSP<K extends Comparable<K>>
 	 * @param Vertex vertice that enters as paramter
 	 */
 	@SuppressWarnings("unused")
-	private void validateVertex(Vertex<K,InformacionVertice,InformacionArco> vertice) 
+	public void validateVertex(Vertex<K,InformacionVertice,InformacionArco> vertice) 
 	{
 		int V = distTo.length;
 		if (vertice.getIdNumeroVertice() < 0 || vertice.getIdNumeroVertice() >= V)
