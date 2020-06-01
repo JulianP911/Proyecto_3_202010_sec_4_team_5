@@ -51,12 +51,10 @@ public class DijkstraSPTest<K, V, E>
 	void testDistTo() 
 	{	
 		setupEscenario1();
-		System.out.println(dijk.distTo(vertice));
 		assertEquals( 1, dijk.distTo(vertice) );
 		
 		setupEscenario2();
-		System.out.println(dijk.distTo(vertice));
-		assertEquals( 1, dijk.distTo(vertice) );
+		assertEquals( 0, dijk.distTo(vertice) );
 	}
 
 	
@@ -64,25 +62,21 @@ public class DijkstraSPTest<K, V, E>
 	void testHasPathTo() 
 	{
 		setupEscenario1();
-		System.out.println(dijk.hasPathTo(vertice));
-		assertEquals( true, dijk.hasPathTo(vertice) );
+		assertEquals( false, dijk.hasPathTo(vertice) );
 		
 		setupEscenario2();
-		System.out.println(dijk.hasPathTo(vertice));
 		assertEquals( false, dijk.distTo(vertice) );
 	}
 
 	
 	@Test
-	void tesPathTo() 
+	void testPathTo() 
 	{
 		setupEscenario1();
-		System.out.println(dijk.pathTo(vertice, grafo));
-		assertEquals( true, dijk.pathTo(vertice, grafo) );
+		assertEquals( null, dijk.pathTo(vertice, grafo) );
 		
 		setupEscenario2();
-		System.out.println(dijk.pathTo(vertice, grafo));
-		assertEquals( false, dijk.pathTo(vertice, grafo) );
+		assertEquals( null, dijk.pathTo(vertice, grafo) );
 	}
 	
 	@Test
